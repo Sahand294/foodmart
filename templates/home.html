@@ -1,7 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'origin_base.html' %}
 {% block title %}
     home
 {% endblock %}
+{% block username %}
+    {% if user %}
+       , {{ user }}
+    {% endif %}
+{% endblock %}
+
 {% block main %}
     <section>
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
