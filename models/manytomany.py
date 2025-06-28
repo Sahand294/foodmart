@@ -1,6 +1,6 @@
 from . import db,u
 
-class CategoryAndProduct(db.model):
-    id = db.Column(db.Integer,primarykey=True)
-    categoryid = db.Column(db.Integer,db.Foriegnkey('category.id'))
-    productid = db.Column(db.Integer,db.Foriegnkey('products.id'))
+class CategoryAndProduct(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    categoryid = db.Column(db.Integer,db.ForeignKey('category.id'))
+    productid = db.Column(db.Integer,db.ForeignKey('products.id'))

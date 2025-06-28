@@ -1,29 +1,29 @@
 from . import db,u
 
-class Country(db.model):
+class Country(db.Model):
     __tablename__ = 'country'
-    id = db.Column(db.Integer,primarykey=True)
+    id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(30))
     key = db.Column(db.String(200),Unique=True)
 
-class City(db.model):
+class City(db.Model):
     __tablename__ = 'city'
-    id = db.Column(db.Integer, primarykey=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     key = db.Column(db.String(200),Unique=True)
-    province = db.Column(db.Integer,db.Foriegnkey('provinces.id'))
+    province = db.Column(db.Integer,db.ForeignKey('provinces.id'))
 
-class ProvinceOrTerritories(db.model):
+class ProvinceOrTerritories(db.Model):
     __tablename__ = 'provinces'
-    id = db.Column(db.Integer, primarykey=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
-    country = db.Column(db.Integer,db.Foriegnkey('country.id'))
+    country = db.Column(db.Integer,db.ForeignKey('country.id'))
 
-class Address_User(db.model):
+class Address_User(db.Model):
     __tablename__ = 'address_user'
-    id = db.Column(db.Integer, primarykey=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
-    city = db.Column(db.Integer,db.Foriegnkey('city.id'))
+    city = db.Column(db.Integer,db.ForeignKey('city.id'))
     address = db.Column(db.String(999))
     postal_code = db.Column(db.String(999))
-    User = db.Column(db.Integer,db.Foriegnkey('users.id'))
+    User = db.Column(db.Integer,db.ForeignKey('users.id'))

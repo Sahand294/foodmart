@@ -1,3 +1,3 @@
 from . import db,u
 
-class PayPal(db.model):
+class PayPal(db.Model):
