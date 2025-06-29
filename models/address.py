@@ -1,16 +1,16 @@
 from . import db,u
-
+import datetime
 class Country(db.Model):
     __tablename__ = 'country'
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(30))
-    key = db.Column(db.String(200),Unique=True)
+    key = db.Column(db.String(200),unique=True)
 
 class City(db.Model):
     __tablename__ = 'city'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
-    key = db.Column(db.String(200),Unique=True)
+    key = db.Column(db.String(200),unique=True)
     province = db.Column(db.Integer,db.ForeignKey('provinces.id'))
 
 class ProvinceOrTerritories(db.Model):

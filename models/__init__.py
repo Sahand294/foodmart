@@ -4,8 +4,15 @@ import importlib
 import os
 db = SQLAlchemy()
 u = UniqueConstraint
-models_direction = os.path.dirname(__file__)
-for i in os.listdir(models_direction):
-    if i.endswith('.py') and not i.startswith('__'):
-        module_name = i[:-3]
-        importlib.import_module(f'{module_name}')
+
+models_directory = os.path.dirname(__file__)
+
+package_name = __name__
+
+for filename in os.listdir(models_directory):
+
+    if filename.endswith('.py') and not filename.startswith('__'):
+        module_name = filename[:-3]
+
+        importlib.import_module(f'{package_name}.{module_name}')
+

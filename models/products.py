@@ -1,5 +1,5 @@
 from . import db,u
-
+import datetime
 class Products(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer,primary_key=True)
@@ -12,11 +12,11 @@ class Products(db.Model):
     about = db.Column(db.String(1000))
 
 class SpecailProducts(db.Model):
-    __tablename__ = 'products'
+    __tablename__ = 'Specailproducts'
     id = db.Column(db.Integer,primary_key=True)
     discount = db.Column(db.Integer)
-    start_date = db.Column(db.Data)
-    end_date = db.Column(db.Data)
+    start_date = db.Column(db.Date, default=datetime.date.today)
+    end_date = db.Column(db.Date, default=datetime.date.today)
     product = db.Column(db.Integer,db.ForeignKey('products.id'))
 
 class CalTaxes:
