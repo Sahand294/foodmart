@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from config import  Config
 
 app = Flask(__name__)
-# migrate = Migrate(app,)
+migrate = Migrate(app,db)
 app.config.from_object(Config)
 app.secret_key = "123"
 db.init_app(app)
@@ -44,18 +44,18 @@ def Admin():
     if request.method == 'POST':
         session['username'] = request.form['username']
         session['password'] = request.form['password']
-# @app.route('/siging', methods=['GET','POST'])
-# def signin():
-#     global logged
-#     if 'username' in session:
-#         del session['username']
-#         del session['password']
-#     if request.method == 'POST':
-#         session['username'] = request.form['username']
-#         session['password'] = request.form['password']
-#         logged = True
-#         return redirect(url_for('home'))
-#     return render_template('login.html')
+@app.route('/siging', methods=['GET','POST'])
+def signin():
+    global logged
+    if 'username' in session:
+        del session['username']
+        del session['password']
+    if request.method == 'POST':
+        session['username'] = request.form['username']
+        session['password'] = request.form['password']
+        logged = True
+        return redirect(url_for('home'))
+    return render_template('login.html')
 
 
 if __name__ == '__main__':

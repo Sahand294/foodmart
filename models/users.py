@@ -20,7 +20,7 @@ class Permision(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     role = db.Column(db.Integer,db.ForeignKey('roles.id'))
     name = db.Column(db.Integer,unique=True,nullable=False)
-    description = db.Column()
+    description = db.Column(db.Text)
     # Role :
     # id:1 , name :guest
     # id:2 , name:customer ,
