@@ -1,0 +1,44 @@
+{% extends 'foodmart1/main2.html' %}
+{% block title %}
+    about us
+{% endblock %}
+{% block css %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Parastoo:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/foodmart1/about-us.css') }}">
+{% endblock %}
+{% block content %}
+    <div class="container about">
+        <div class="page row">
+            <div class="description col-md-6 parastoo-about"> Welcome to Sahand's World
+Explore a unique blend of creativity, insight, and innovation. Curated by Sahand, this digital space showcases ideas, projects, and perspectives that spark imagination and inspire curiosity. Whether you're here for fresh content, collaboration, or just good vibes—there’s something here for you.
+</div>
+            <div class="images col-md-6"><img src="{{ url_for('static',filename='images/download.png') }}"></div>
+
+        </div>
+        <div class="page row">
+            <div class="description col-md-6 parastoo-about"> 👨‍💻 About Me – Sahand
+Hi, I'm Sahand — a 13-year-old student and aspiring web developer. I'm currently learning Python and Flask with the guidance of my teacher, and I enjoy building real projects that help me improve my skills.
+
+Over time, I’ve built small websites and applications using Flask, along with some basic HTML and CSS to design the pages. I'm also exploring more advanced topics like APIs, web automation, and how to make websites more interactive.
+
+Even though I’m still early in my journey, I take coding seriously and work hard to write clean, well-organized, and understandable code. My goal is to keep learning, keep building, and one day become a professional developer.
+
+🧠 What I'm Learning
+Python and Flask (web backend development)
+
+Front-end basics (HTML/CSS)
+
+Using GitHub to manage and share my code
+
+API integration and automation tools
+
+🎯 Why I Started Coding
+I started coding because I love the idea of creating something useful from just a few lines of code. Every new thing I learn feels like unlocking a new superpower — and I'm excited to keep going.
+</div>
+            <div class="images col-md-6"><img src="{{ url_for('static',filename='images/self.png') }}"></div>
+
+        </div>
+    </div>
+{% endblock %}

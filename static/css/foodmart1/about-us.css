@@ -1,0 +1,54 @@
+.page{
+    padding: 30px;
+    box-sizing: border-box;
+   display: flex;
+    width: 100%;
+    height: fit-content;
+    margin-bottom: 20px;
+    border-radius: 20px;
+}
+.page:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+.page {
+    background: linear-gradient(45deg, #ff9a9e, #fecfef, #a8edea, #fed6e3);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+.description{
+
+    flex:1;
+
+}
+img{
+    width:100%;
+}
+.parastoo-about {
+  font-family: "Parastoo", serif;
+  font-optical-sizing: auto;
+  font-weight: 550;
+  font-style: normal;
+  font-size: 30;
+}
+@media screen and (max-width:750px){
+    .page{
+        flex-direction: column;
+    }
+}
+.about{
+    gap: 30px !important;
+    flex-direction: column;
+}

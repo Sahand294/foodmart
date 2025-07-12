@@ -1,0 +1,10 @@
+{% extends 'foodmart1/main2.html' %}
+{% block title %}Error 404{% endblock %}
+{% block css %}<link href="{{ url_for('static',filename='css/foodmart1/eroor404.css') }}" rel="stylesheet">{% endblock %}
+{% block content %}
+  <div class="error-container">
+    <h1>401</h1>
+    <h2>Wrong input</h2>
+    <p>you have put in a unfinished or wrong input of {{ error }}</p>
+  </div>
+{% endblock %}
