@@ -9,18 +9,24 @@ class Users(db.Model):
     password = db.Column(db.String(198))
     roleid = db.Column(db.Integer,db.ForeignKey('roles.id'))
 
+    users = db.relationship('Users', back_populates='role', lazy=True)
 
 class Roles(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(20),unique=True,nullable=False)
     description = db.Column(db.Text)
+
+    users = db.relationship('Users', back_populates='role', lazy=True)
+    permissions = db.relationship('Permision', back_populates='role_rel', lazy=True)
 class Permision(db.Model):
     __tablename__ = 'permisions'
     id = db.Column(db.Integer,primary_key=True)
     role = db.Column(db.Integer,db.ForeignKey('roles.id'))
-    name = db.Column(db.Integer,unique=True,nullable=False)
+    name = db.Column(db.String(50),unique=True,nullable=False)
     description = db.Column(db.Text)
+
+    role_rel = db.relationship('Roles', back_populates='permissions')
     # Role :
     # id:1 , name :guest
     # id:2 , name:customer ,

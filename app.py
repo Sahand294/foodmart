@@ -95,26 +95,30 @@ def about_us():
 
 @app.route('/signup', methods=['GET','POST'])
 def signin():
+    print('make it')
     global logged
     if 'username' in session:
         del session['username']
         del session['password']
     if request.method == 'POST':
+        print('hi')
         session['firstname'] = request.form['firstname']
         session['lastname'] = request.form['lastname']
         session['email'] = request.form['email']
         session['username'] = request.form['username']
         session['password'] = request.form['password']
         if is_real_email(session['email']):
-            pass
+            print('not uh oh')
         else:
+            print('uh oh')
             return redirect(url_for('error'))
-        logged = True
+        # logged = True
         email = session['email']
         username =  session['username']
         password = session['password']
         firstname = session['firstname']
         lastname = session['lastname']
+        print('processing')
         AddAccounts.add(email,firstname,lastname,username,password)
         return redirect(url_for('home'))
     return render_template('foodmart1/signin.html')
