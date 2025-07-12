@@ -9,7 +9,7 @@ class Users(db.Model):
     password = db.Column(db.String(198))
     roleid = db.Column(db.Integer,db.ForeignKey('roles.id'))
 
-    users = db.relationship('Users', back_populates='role', lazy=True)
+    role = db.relationship('Roles', back_populates='users')
 
 class Roles(db.Model):
     __tablename__ = 'roles'
