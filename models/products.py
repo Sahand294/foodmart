@@ -33,4 +33,4 @@ class ProductAttribute(db.Model):
     product_id = db.Column(db.Integer,db.ForeignKey('products.id'))
     attribute_id = db.Column(db.Integer,db.ForeignKey('attributes.id'))
     value = db.Column(db.String(200),nullable=False)
-    attribute = db.relationship('attributes')
+    attribute = db.relationship('Attribute')

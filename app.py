@@ -7,6 +7,7 @@ from sending_emails import Send
 import re
 import dns.resolver
 from add_account import AddAccounts
+from default_values import add_them
 
 def is_real_email(email):
     # Step 1: Validate format
@@ -129,4 +130,5 @@ def error():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+    add_them()
     app.run()
