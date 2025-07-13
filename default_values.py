@@ -1,11 +1,11 @@
 from models.users import Roles
 from models import db
 from models.sitesetting import SiteSetting
-from app import app  # Replace with the actual path to your Flask app instance
+# from app import app
 
 
-def add_them():
-
+def add_them(app):
+    print('default')
 
     with app.app_context():
         customer = Roles.query.filter_by(name="Customer").first()

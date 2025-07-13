@@ -1,7 +1,6 @@
 from flask import Flask,render_template,session,url_for,request,redirect,flash,Blueprint
 from flask_migrate import Migrate
 from models import db
-from werkzeug.security import generate_password_hash, check_password_hash
 from config import  Config
 from sending_emails import Send
 import re
@@ -29,6 +28,7 @@ app.config.from_object(Config)
 app.secret_key = "123"
 db.init_app(app)
 logged = False
+# add_them(app)
 @app.route('/')
 def home():  # put application's code here
     global logged
@@ -128,7 +128,8 @@ def signin():
 def error():
     return render_template('foodmart1/error.html')
 if __name__ == '__main__':
+    add_them(app)
     with app.app_context():
         db.create_all()
-    add_them()
+
     app.run()
