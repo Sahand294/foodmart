@@ -2,7 +2,7 @@ from models.users import Roles
 from models import db
 from models.sitesetting import SiteSetting
 # from app import app
-
+print('default')
 
 def add_them(app):
     print('default')
