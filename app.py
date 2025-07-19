@@ -127,10 +127,15 @@ def signin():
 @app.route('/error401')
 def error():
     return render_template('foodmart1/error.html')
+
+@app.route('/install')
+def install():
+    global app
+    add_them(app)
+    return render_template('foodmart1/install.html')
 if __name__ == '__main__':
-    print('test')
     with app.app_context():
         db.create_all()
-        add_them(app)
+
 
     app.run(debug=True)
