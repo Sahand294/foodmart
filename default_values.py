@@ -39,23 +39,23 @@ def add_them(app):
             db.session.add(l)
             db.session.commit()
         if not installed:
-            installed = SiteSetting(key='installed',value='False')
+            installed = SiteSetting(key='installed',Value='False')
             db.session.add(installed)
             db.session.commit()
 
         if not smtp_port:
-            port = SiteSetting(key="smtp_port",value='587')
+            port = SiteSetting(key="smtp_port",Value='587')
             db.session.add(port)
             db.session.commit()
 
         if not smtp_server:
-            server = SiteSetting(key='server',value='smtp.gmail.com')
+            server = SiteSetting(key='server',Value='smtp.gmail.com')
             db.session.add(server)
             db.session.commit()
 
         if not smtp_pass:
             passs = SiteSetting(key='smtp_pass')
-            db.session.add(n)
+            db.session.add(passs)
             db.session.commit()
 
         if not e:
