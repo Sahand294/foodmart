@@ -39,26 +39,37 @@ logged = False
 
 @app.route('/install', methods=['GET', 'POST'])
 def install():
-    i = SiteSetting.query(key="installed")
-
+    i = SiteSetting.query.filter_by(key="installed").first()
     installed = string_to_bool(i.Value)
     print(str(installed) + 'installed')
     if installed:
         return redirect(url_for('home'))
     global app
     DF(app)
+    print('test1')
     if request.method == 'POST':
-        session['name'] = request.form['Name']
-        logo = request.files['Logo']
-        session['template'] = request.form['Template']
-        session['receiver'] = request.form['Receiver']
-        session['smtp_user'] = request.form['smtp_user']
-        session['smtp_port'] = request.form['smtp_port']
-        session['smtp_server'] = request.form['smtp_server']
-        session['smtp_pass'] = request.form['smtp_port']
+        print(request.files)
 
-        Add_Values(session['name'], session['smtp_user'], session['receiver'], session['template'], 'True',
+        print('test2')
+        session['name'] = request.form['Name']
+        print('test10')
+        logo = request.files['Logo']
+        print('test11')
+        session['template'] = request.form['Template']
+        print('test12')
+        session['receiver'] = request.form['Receiver']
+        print('test13')
+        session['smtp_user'] = request.form['smtp_user']
+        print('test14')
+        session['smtp_port'] = request.form['smtp_port']
+        print('test15')
+        session['smtp_server'] = request.form['smtp_server']
+        print('test16')
+        session['smtp_pass'] = request.form['smtp_port']
+        print('test3')
+        Add_Values(logo,session['name'], session['smtp_user'], session['receiver'], session['template'], 'True',
                 session['smtp_port'], session['smtp_server'], session['smtp_pass'])
+        print('test4')
     return render_template('foodmart1/install.html')
 
 

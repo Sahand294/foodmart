@@ -9,7 +9,7 @@
 <body>
     <div class="login-container">
         <h2>Make  Your website</h2>
-        <form action="/install" method="POST">
+        <form action="/install" method="POST" enctype="multipart/form-data">
             <label for="Name">Website Name</label>
             <input type="text" id="Name" name="Name" required/>
 
@@ -32,7 +32,7 @@
             <input type="password" id="smtp_port" name="smtp_port" required/>
 
             <label for="smtp_server">smtp_server</label>
-            <input type="password" id="smtp_server" name="smtp_server" required/><label for="smtp_server">smtp_user</label>
+            <input type="password" id="smtp_server" name="smtp_server" required/>
             <button type="submit">done</button>
         </form>
     </div>

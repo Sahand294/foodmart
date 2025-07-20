@@ -76,15 +76,15 @@ def DF(app):
             db.session.add(t)
             db.session.commit()
 def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa):
-    l = SiteSetting.query(key="Logo")
-    n = SiteSetting.query(key="Name")
-    e = SiteSetting.query(key="smtp_user")
-    ec = SiteSetting.query(key="receiver_email")
-    t = SiteSetting.query(key="Template")
-    installed = SiteSetting.query(key="installed")
-    smtp_port = SiteSetting.query(key="smtp_port")
-    smtp_server = SiteSetting.query(key="server")
-    smtp_pass = SiteSetting.query(key="smtp_pass")
+    l = SiteSetting.query.filter_by(key="Logo").first()
+    n = SiteSetting.query.filter_by(key="Name").first()
+    e = SiteSetting.query.filter_by(key="smtp_user").first()
+    ec = SiteSetting.query.filter_by(key="receiver_email").first()
+    t = SiteSetting.query.filter_by(key="Template").first()
+    installed = SiteSetting.query.filter_by(key="installed").first()
+    smtp_port = SiteSetting.query.filter_by(key="smtp_port").first()
+    smtp_server = SiteSetting.query.filter_by(key="server").first()
+    smtp_pass = SiteSetting.query.filter_by(key="smtp_pass").first()
     if Logo.filename == '':
         pass
     else:
