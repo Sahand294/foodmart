@@ -1,12 +1,13 @@
-from flask import Flask,render_template,session,url_for,request,redirect,flash,Blueprint
+from flask import Flask, render_template, session, url_for, request, redirect, flash, Blueprint
 from flask_migrate import Migrate
-from models import db
-from config import  Config
+from config import Config
 from sending_emails import Send
 import re
 import dns.resolver
 from add_account import AddAccounts
-from default_values import add_them
+from default_values import DF, Add_Values
+from models import db
+from models.sitesetting import SiteSetting
 
 def is_real_email(email):
     # Step 1: Validate format
@@ -22,15 +23,48 @@ def is_real_email(email):
     except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer, dns.exception.Timeout):
         return False
 
+def string_to_bool(value):
+    if isinstance(value,bool):
+        return value
+    if isinstance(value,str):
+        if value.lower() in ['true','True','1']:
+            return  True
+    return False
 app = Flask(__name__)
-migrate = Migrate(app,db)
+migrate = Migrate(app, db)
 app.config.from_object(Config)
 app.secret_key = "123"
 db.init_app(app)
 logged = False
-# add_them(app)
+
+@app.route('/install', methods=['GET', 'POST'])
+def install():
+    i = SiteSetting.query(key="installed")
+
+    installed = string_to_bool(i.Value)
+    print(str(installed) + 'installed')
+    if installed:
+        return redirect(url_for('home'))
+    global app
+    DF(app)
+    if request.method == 'POST':
+        session['name'] = request.form['Name']
+        logo = request.files['Logo']
+        session['template'] = request.form['Template']
+        session['receiver'] = request.form['Receiver']
+        session['smtp_user'] = request.form['smtp_user']
+        session['smtp_port'] = request.form['smtp_port']
+        session['smtp_server'] = request.form['smtp_server']
+        session['smtp_pass'] = request.form['smtp_port']
+
+        Add_Values(session['name'], session['smtp_user'], session['receiver'], session['template'], 'True',
+                session['smtp_port'], session['smtp_server'], session['smtp_pass'])
+    return render_template('foodmart1/install.html')
+
+
+
 @app.route('/')
-def home():  # put application's code here
+def home():
     global logged
     user = ''
     if 'username' in session:
@@ -40,6 +74,8 @@ def home():  # put application's code here
         del session['username']
         del session['password']
     return render_template('foodmart1/main2.html')
+
+
 # @app.route('/index')
 # def index():
 #     return 'hello'
@@ -47,6 +83,7 @@ def home():  # put application's code here
 # def login():
 #     return 'hi'
 contact_bp = Blueprint('contact', __name__)
+
 
 @app.route('/contact_us', methods=['GET', 'POST'])
 def contact_us():
@@ -73,7 +110,8 @@ def contact_us():
     # GET request - just render the contact form
     return render_template('foodmart1/contact-us.html')
 
-@app.route('/login',methods=['GET','POST'])
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     global logged
     if 'username' in session:
@@ -85,16 +123,21 @@ def login():
         logged = True
         return redirect(url_for('home'))
     return render_template('foodmart1/login.html')
-@app.route('/admin',methods=['GET','POST'])
+
+
+@app.route('/admin', methods=['GET', 'POST'])
 def Admin():
     if request.method == 'POST':
         session['username'] = request.form['username']
         session['password'] = request.form['password']
+
+
 @app.route('/about_us')
 def about_us():
     return render_template('foodmart1/about_us.html')
 
-@app.route('/signup', methods=['GET','POST'])
+
+@app.route('/signup', methods=['GET', 'POST'])
 def signin():
     print('make it')
     global logged
@@ -115,27 +158,23 @@ def signin():
             return redirect(url_for('error'))
         # logged = True
         email = session['email']
-        username =  session['username']
+        username = session['username']
         password = session['password']
         firstname = session['firstname']
         lastname = session['lastname']
         print('processing')
-        AddAccounts.add(email,firstname,lastname,username,password)
+        AddAccounts.add(email, firstname, lastname, username, password)
         return redirect(url_for('home'))
     return render_template('foodmart1/signin.html')
+
 
 @app.route('/error401')
 def error():
     return render_template('foodmart1/error.html')
 
-@app.route('/install')
-def install():
-    global app
-    add_them(app)
-    return render_template('foodmart1/install.html')
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
 
     app.run(debug=True)

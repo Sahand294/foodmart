@@ -2,8 +2,9 @@ from models.users import Roles
 from models import db
 from models.sitesetting import SiteSetting
 # from app import app
-
-def add_them(app):
+from werkzeug.utils import secure_filename
+import os
+def DF(app):
 
 
     with app.app_context():
@@ -29,7 +30,7 @@ def add_them(app):
         t = SiteSetting.query.filter_by(key="Template").first()
         installed =   SiteSetting.query.filter_by(key="installed").first()
         smtp_port = SiteSetting.query.filter_by(key="smtp_port").first()
-        smtp_server =   SiteSetting.query.filter_by(key="smtp_server").first()
+        smtp_server =   SiteSetting.query.filter_by(key="server").first()
         smtp_pass =     SiteSetting.query.filter_by(key="smtp_pass").first()
 
 
@@ -37,6 +38,10 @@ def add_them(app):
         if not l:
             l = SiteSetting(key='Logo')
             db.session.add(l)
+            db.session.commit()
+        if not n:
+            n = SiteSetting(key='Name')
+            db.session.add(n)
             db.session.commit()
         if not installed:
             installed = SiteSetting(key='installed',Value='False')
@@ -70,3 +75,50 @@ def add_them(app):
             t = SiteSetting(key='Template')
             db.session.add(t)
             db.session.commit()
+def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa):
+    l = SiteSetting.query(key="Logo")
+    n = SiteSetting.query(key="Name")
+    e = SiteSetting.query(key="smtp_user")
+    ec = SiteSetting.query(key="receiver_email")
+    t = SiteSetting.query(key="Template")
+    installed = SiteSetting.query(key="installed")
+    smtp_port = SiteSetting.query(key="smtp_port")
+    smtp_server = SiteSetting.query(key="server")
+    smtp_pass = SiteSetting.query(key="smtp_pass")
+    if Logo.filename == '':
+        pass
+    else:
+        filename = secure_filename(Logo.filename)
+        upload_files = "uploads"
+        os.makedirs(upload_files,exist_ok=True)
+        filepath = os.path.join(upload_files,filename)
+        Logo.save(filepath)
+        if l:
+            l.Value = filepath
+            db.session.commit()
+
+    if n:
+        n.Value = Name
+        db.session.commit()
+
+    if e:
+        e.Value = user
+        db.session.commit()
+    if ec:
+        n.Value = reciever
+        db.session.commit()
+    if t:
+        t.Value = T
+        db.session.commit()
+    if installed:
+        installed.Value = Installed
+        db.session.commit()
+    if smtp_port:
+        smtp_port.Value = smtp_po
+        db.session.commit()
+    if smtp_pass:
+        smtp_port.Value = smtp_pa
+        db.session.commit()
+    if smtp_server:
+        smtp_server.Value = smtp_s
+        db.session.commit()
