@@ -41,35 +41,36 @@ logged = False
 def install():
     i = SiteSetting.query.filter_by(key="installed").first()
     installed = string_to_bool(i.Value)
-    print(str(installed) + 'installed')
+
     if installed:
         return redirect(url_for('home'))
     global app
     DF(app)
-    print('test1')
-    if request.method == 'POST':
-        print(request.files)
 
-        print('test2')
+    if request.method == 'POST':
+
+
+
         session['name'] = request.form['Name']
-        print('test10')
+
         logo = request.files['Logo']
-        print('test11')
+
         session['template'] = request.form['Template']
-        print('test12')
-        session['receiver'] = request.form['Receiver']
-        print('test13')
+
+        session['receiver'] = request.form['receiver']
+
         session['smtp_user'] = request.form['smtp_user']
-        print('test14')
+
         session['smtp_port'] = request.form['smtp_port']
-        print('test15')
+
         session['smtp_server'] = request.form['smtp_server']
-        print('test16')
-        session['smtp_pass'] = request.form['smtp_port']
-        print('test3')
+
+        session['smtp_pass'] = request.form['smtp_pass']
+
         Add_Values(logo,session['name'], session['smtp_user'], session['receiver'], session['template'], 'True',
                 session['smtp_port'], session['smtp_server'], session['smtp_pass'])
-        print('test4')
+        return redirect(url_for('home'))
+
     return render_template('foodmart1/install.html')
 
 
@@ -150,22 +151,22 @@ def about_us():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signin():
-    print('make it')
+
     global logged
     if 'username' in session:
         del session['username']
         del session['password']
     if request.method == 'POST':
-        print('hi')
+
         session['firstname'] = request.form['firstname']
         session['lastname'] = request.form['lastname']
         session['email'] = request.form['email']
         session['username'] = request.form['username']
         session['password'] = request.form['password']
         if is_real_email(session['email']):
-            print('not uh oh')
+            pass
         else:
-            print('uh oh')
+
             return redirect(url_for('error'))
         # logged = True
         email = session['email']
@@ -173,7 +174,7 @@ def signin():
         password = session['password']
         firstname = session['firstname']
         lastname = session['lastname']
-        print('processing')
+
         AddAccounts.add(email, firstname, lastname, username, password)
         return redirect(url_for('home'))
     return render_template('foodmart1/signin.html')

@@ -76,11 +76,11 @@ def DF(app):
             db.session.add(t)
             db.session.commit()
 def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa):
-    l = SiteSetting.query.filter_by(key="Logo").first()
-    n = SiteSetting.query.filter_by(key="Name").first()
-    e = SiteSetting.query.filter_by(key="smtp_user").first()
-    ec = SiteSetting.query.filter_by(key="receiver_email").first()
-    t = SiteSetting.query.filter_by(key="Template").first()
+    logo = SiteSetting.query.filter_by(key="Logo").first()
+    name = SiteSetting.query.filter_by(key="Name").first()
+    smtp_user = SiteSetting.query.filter_by(key="smtp_user").first()
+    receiver_email = SiteSetting.query.filter_by(key="receiver_email").first()
+    template = SiteSetting.query.filter_by(key="Template").first()
     installed = SiteSetting.query.filter_by(key="installed").first()
     smtp_port = SiteSetting.query.filter_by(key="smtp_port").first()
     smtp_server = SiteSetting.query.filter_by(key="server").first()
@@ -93,31 +93,36 @@ def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa):
         os.makedirs(upload_files,exist_ok=True)
         filepath = os.path.join(upload_files,filename)
         Logo.save(filepath)
-        if l:
-            l.Value = filepath
+        if logo:
+            logo.Value = filepath
             db.session.commit()
 
-    if n:
-        n.Value = Name
+    if name:
+        print('name')
+        name.Value = Name
         db.session.commit()
 
-    if e:
-        e.Value = user
+    if smtp_user:
+        smtp_user.Value = user
         db.session.commit()
-    if ec:
-        n.Value = reciever
+    if receiver_email:
+        print('email')
+        receiver_email.Value = reciever
         db.session.commit()
-    if t:
-        t.Value = T
+    if template:
+        template.Value = T
         db.session.commit()
     if installed:
         installed.Value = Installed
         db.session.commit()
     if smtp_port:
+        print('port')
         smtp_port.Value = smtp_po
         db.session.commit()
+
     if smtp_pass:
-        smtp_port.Value = smtp_pa
+        print('pass')
+        smtp_pass.Value = smtp_pa
         db.session.commit()
     if smtp_server:
         smtp_server.Value = smtp_s
