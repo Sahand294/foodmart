@@ -1,4 +1,8 @@
 from . import db
+role_permissions = db.Table('role_permissions',
+                            db.Column('role_id', db.Integer, db.ForeignKey('roles.id'), primary_key=True),
+                            db.Column('permission_id', db.Integer, db.ForeignKey('permissions.id'), primary_key=True)
+                            )
 class Users(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key=True)
@@ -16,18 +20,18 @@ class Roles(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(20),unique=True,nullable=False)
     description = db.Column(db.Text)
-
+    permissions = db.relationship('Permission', secondary=role_permissions, back_populates='roles')
     users = db.relationship('Users', back_populates='role', lazy=True)
-    permissions = db.relationship('Permision', back_populates='role_rel', lazy=True)
 class Permision(db.Model):
-    __tablename__ = 'permisions'
+    __tablename__ = 'permissions'
     id = db.Column(db.Integer,primary_key=True)
     role = db.Column(db.Integer,db.ForeignKey('roles.id'))
     name = db.Column(db.String(50),unique=True,nullable=False)
     description = db.Column(db.Text)
 
-    role_rel = db.relationship('Roles', back_populates='permissions')
-    # Role :
+    roles = db.relationship('Roles', secondary=role_permissions, back_populates='permissions')
+
+# Role :
     # id:1 , name :guest
     # id:2 , name:customer ,
 

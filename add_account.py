@@ -1,6 +1,7 @@
 from werkzeug.security import generate_password_hash
 from models.users import   Users
 from models import db
+
 class AddAccounts:
     @staticmethod
     def encrypting_password(password):

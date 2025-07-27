@@ -4,6 +4,7 @@ from models.sitesetting import SiteSetting
 # from app import app
 from werkzeug.utils import secure_filename
 import os
+from default_connection import Connect
 def DF(app):
 
 

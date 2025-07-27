@@ -8,7 +8,7 @@ from add_account import AddAccounts
 from default_values import DF, Add_Values
 from models import db
 from models.sitesetting import SiteSetting
-
+from default_connection import Connect
 def is_real_email(email):
     # Step 1: Validate format
     pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -78,6 +78,7 @@ def install():
 @app.route('/')
 def home():
     global logged
+    name = Connect.get_value('Name')
     user = ''
     if 'username' in session:
         if logged:
@@ -85,7 +86,7 @@ def home():
     elif 'username' in session:
         del session['username']
         del session['password']
-    return render_template('foodmart1/main2.html')
+    return render_template('foodmart1/main2.html',name=name)
 
 
 # @app.route('/index')
