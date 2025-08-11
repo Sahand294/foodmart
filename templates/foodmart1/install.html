@@ -7,34 +7,45 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='css/login.css') }}">
 </head>
 <body>
-    <div class="login-container">
-        <h2>Make  Your website</h2>
-        <form action="/install" method="POST" enctype="multipart/form-data">
-            <label for="Name">Website Name</label>
-            <input type="text" id="Name" name="Name" required/>
+<div class="login-container">
+    <h2>Make Your website</h2>
+    <form action="/install" method="POST" enctype="multipart/form-data">
+        <label for="Name">Website Name</label>
+        <input type="text" id="Name" name="Name" required/>
 
-            <label for="Logo">Logo</label>
-            <input type="file" id="Logo" name="Logo" required/>
+        <label for="Logo">Logo</label>
+        <input type="file" id="Logo" name="Logo" required/>
 
-            <label for="Template">Template</label>
-            <input type="text" id="Template" name="Template" required/>
+        <label for="Template">Template</label>
+        <input type="text" id="Template" name="Template" required/>
 
-            <label for="receiver">Receiver Email</label>
-            <input type="text" id="receiver" name="receiver" required/>
+        <label for="receiver">Receiver Email</label>
+        <input type="text" id="receiver" name="receiver" required/>
 
-            <label for="smtp_user">smtp_user</label>
-            <input type="text" id="smtp_user" name="smtp_user" required/>
+        <label for="smtp_user">smtp_user</label>
+        <input type="text" id="smtp_user" name="smtp_user" required/>
 
-            <label for="smtp_pass">smtp_pass</label>
-            <input type="password" id="smtp_pass" name="smtp_pass" required/>
+        <label for="smtp_pass">smtp_pass</label>
+        <input type="password" id="smtp_pass" name="smtp_pass" required/>
 
-            <label for="smtp_port">smtp_port</label>
-            <input type="password" id="smtp_port" name="smtp_port" required/>
+        <label for="smtp_port">smtp_port</label>
+        <input type="password" id="smtp_port" name="smtp_port" required/>
 
-            <label for="smtp_server">smtp_server</label>
-            <input type="password" id="smtp_server" name="smtp_server" required/>
-            <button type="submit">done</button>
-        </form>
-    </div>
+        <label for="smtp_server">smtp_server</label>
+        <input type="password" id="smtp_server" name="smtp_server" required/>
+
+        <label for="firstname">firstname</label>
+        <input type="text" id="firstname" name="firstname" required/>
+        <label for="lastname">lastname</label>
+        <input type="text" id="lastname" name="lastname" required/>
+        <label for="username">username</label>
+        <input type="text" id="username" name="username" required/>
+        <label for="emai">email</label>
+        <input type="text" id="emai" name="emai" required/>
+        <label for="password">password</label>
+        <input type="password" id="password" name="password" required/>
+        <button type="submit">done</button>
+    </form>
+</div>
 </body>
 </html>

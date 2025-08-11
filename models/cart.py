@@ -1,5 +1,5 @@
-from . import db,u
-
+from . import db
+from models.products import Products
 class Carts(db.Model):
     __tablename__ = 'carts'
     id = db.Column(db.Integer,primary_key=True)

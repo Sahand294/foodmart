@@ -9,6 +9,9 @@ from default_values import DF, Add_Values
 from models import db
 from models.sitesetting import SiteSetting
 from default_connection import Connect
+from default_permissions import DF_P,Add_Connection
+from models import Users
+from werkzeug.security import generate_password_hash,check_password_hash
 def is_real_email(email):
     # Step 1: Validate format
     pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -31,44 +34,54 @@ def string_to_bool(value):
             return  True
     return False
 app = Flask(__name__)
-migrate = Migrate(app, db)
 app.config.from_object(Config)
 app.secret_key = "123"
 db.init_app(app)
+migrate = Migrate(app, db)
+
 logged = False
 
 @app.route('/install', methods=['GET', 'POST'])
 def install():
+    global app
     i = SiteSetting.query.filter_by(key="installed").first()
     installed = string_to_bool(i.Value)
-
+    DF_P(app)
+    Add_Connection(app)
     if installed:
         return redirect(url_for('home'))
-    global app
+
     DF(app)
+
 
     if request.method == 'POST':
 
 
 
-        session['name'] = request.form['Name']
+        name = request.form['Name']
 
         logo = request.files['Logo']
 
-        session['template'] = request.form['Template']
+        template = request.form['Template']
 
-        session['receiver'] = request.form['receiver']
+        receiver = request.form['receiver']
 
-        session['smtp_user'] = request.form['smtp_user']
+        smtp_user = request.form['smtp_user']
 
-        session['smtp_port'] = request.form['smtp_port']
+        smtp_port = request.form['smtp_port']
 
-        session['smtp_server'] = request.form['smtp_server']
+        smtp_server = request.form['smtp_server']
 
-        session['smtp_pass'] = request.form['smtp_pass']
+        smtp_pass = request.form['smtp_pass']
 
-        Add_Values(logo,session['name'], session['smtp_user'], session['receiver'], session['template'], 'True',
-                session['smtp_port'], session['smtp_server'], session['smtp_pass'])
+        username = request.form['username']
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        email = request.form['email']
+        password = request.form['password']
+
+        Add_Values(logo,name, smtp_user, receiver, template, 'True',
+                smtp_port, smtp_server, smtp_pass,username,password,firstname,lastname,email)
         return redirect(url_for('home'))
 
     return render_template('foodmart1/install.html')
@@ -86,7 +99,7 @@ def home():
     elif 'username' in session:
         del session['username']
         del session['password']
-    return render_template('foodmart1/main2.html',name=name)
+    return render_template('foodmart1/main2.html',name=name,username=user,logged=logged)
 
 
 # @app.route('/index')
@@ -127,14 +140,27 @@ def contact_us():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global logged
+    print('starting')
     if 'username' in session:
         del session['username']
         del session['password']
     if request.method == 'POST':
-        session['username'] = request.form['username']
-        session['password'] = request.form['password']
-        logged = True
-        return redirect(url_for('home'))
+        print('alright doing good')
+        password = request.form['password']
+        print('lol')
+        user = Users.query.filter_by(username=session['username']).first()
+        print('finding account')
+        if user:
+            if check_password_hash(user.password,password):
+                print('password is right')
+                session['username'] = request.form['username']
+                session['password'] = request.form['password']
+                logged = True
+                return redirect(url_for('home'))
+            else:
+                return redirect(url_for('error'))
+        else:
+            return redirect(url_for('error'))
     return render_template('foodmart1/login.html')
 
 
@@ -152,7 +178,7 @@ def about_us():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signin():
-
+    print('making account')
     global logged
     if 'username' in session:
         del session['username']
@@ -164,24 +190,24 @@ def signin():
         session['email'] = request.form['email']
         session['username'] = request.form['username']
         session['password'] = request.form['password']
-        if is_real_email(session['email']):
-            pass
-        else:
-
-            return redirect(url_for('error'))
-        # logged = True
+        # if is_real_email(session['email']):
+        #     pass
+        # else:
+        #
+        #     return redirect(url_for('error'))
+        logged = True
         email = session['email']
         username = session['username']
         password = session['password']
         firstname = session['firstname']
         lastname = session['lastname']
 
-        AddAccounts.add(email, firstname, lastname, username, password)
+        # AddAccounts.add(email, firstname, lastname, username, password)
         return redirect(url_for('home'))
     return render_template('foodmart1/signin.html')
 
 
-@app.route('/error401')
+@app.errorhandler(401)
 def error():
     return render_template('foodmart1/error.html')
 

@@ -15,7 +15,7 @@
 <header class="header">
     <div class="nav-container">
         <a href="{{ url_for('login') }}" class="logo">
-            <i class="fas fa-utensils"></i> {% if name %}{{ name }}{% endif %}
+            <i class="fas fa-utensils"></i> {% if name %}{{ name }}{% endif %}{% if username %}Your logged in your account {{ username }}{% endif %}
         </a>
         <nav>
             <ul class="nav-menu" id="navMenu">
@@ -23,8 +23,12 @@
                 <li><a href="#products">Products</a></li>
                 <li><a href="http://127.0.0.1:5000/about_us">About Us</a></li>
                 <li><a href="http://127.0.0.1:5000/contact_us">Contact US</a></li>
+                {% if logged %}<form action="/" method="POST">
+                <button type="submit">Logout</button>
+            </form>
+                {% else %}
                 <li><a href="http://127.0.0.1:5000/login">Login</a></li>
-
+                {% endif %}
             </ul>
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
                 <i class="fas fa-bars"></i>

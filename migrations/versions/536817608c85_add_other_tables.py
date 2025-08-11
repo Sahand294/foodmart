@@ -124,15 +124,15 @@ def upgrade():
     sa.ForeignKeyConstraint(['city'], ['city.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('cart_products',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('amount', sa.Integer(), nullable=True),
-    sa.Column('product_id', sa.Integer(), nullable=True),
-    sa.Column('cart_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['cart_id'], ['carts.id'], ),
-    sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
+    # op.create_table('cart_products',
+    # sa.Column('id', sa.Integer(), nullable=False),
+    # sa.Column('amount', sa.Integer(), nullable=True),
+    # sa.Column('product_id', sa.Integer(), nullable=True),
+    # sa.Column('cart_id', sa.Integer(), nullable=True),
+    # sa.ForeignKeyConstraint(['cart_id'], ['carts.id'], ),
+    # sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
+    # sa.PrimaryKeyConstraint('id')
+    # )
     op.create_table('category_and_product',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('categoryid', sa.Integer(), nullable=True),

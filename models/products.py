@@ -8,7 +8,6 @@ class Products(db.Model):
     price = db.Column(db.Integer)
     name = db.Column(db.String(200))
     brand_id = db.Column(db.Integer,db.ForeignKey('brands.id'))
-    brand_name = db.Column(db.String(300),db.ForeignKey('brands.name'))
     about = db.Column(db.String(1000))
 
 class SpecailProducts(db.Model):

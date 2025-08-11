@@ -1,10 +1,11 @@
-from models.users import Roles
+from models import Roles
 from models import db
 from models.sitesetting import SiteSetting
 # from app import app
 from werkzeug.utils import secure_filename
 import os
 from default_connection import Connect
+from models import Users
 def DF(app):
 
 
@@ -76,7 +77,7 @@ def DF(app):
             t = SiteSetting(key='Template')
             db.session.add(t)
             db.session.commit()
-def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa):
+def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa,ownerusername,ownerpassword,ownerfirstname,ownerlastname,owneremail):
     logo = SiteSetting.query.filter_by(key="Logo").first()
     name = SiteSetting.query.filter_by(key="Name").first()
     smtp_user = SiteSetting.query.filter_by(key="smtp_user").first()
@@ -128,3 +129,7 @@ def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa):
     if smtp_server:
         smtp_server.Value = smtp_s
         db.session.commit()
+
+    owner = Users(firstname=ownerfirstname,lastname=ownerlastname,password=ownerpassword,email=owneremail,username=ownerusername,roleid=4)
+    db.session.add(owner)
+    db.commit()

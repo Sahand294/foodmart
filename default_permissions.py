@@ -1,58 +1,94 @@
-from models.users import Roles
+from models import Roles
 from models import db
-from models.sitesetting import SiteSetting
+from models import Permision
 # from app import app
 from werkzeug.utils import secure_filename
 import os
-def Add_Values_P():
-    logo = SiteSetting.query.filter_by(key="Logo").first()
-    name = SiteSetting.query.filter_by(key="Name").first()
-    smtp_user = SiteSetting.query.filter_by(key="smtp_user").first()
-    receiver_email = SiteSetting.query.filter_by(key="receiver_email").first()
-    template = SiteSetting.query.filter_by(key="Template").first()
-    installed = SiteSetting.query.filter_by(key="installed").first()
-    smtp_port = SiteSetting.query.filter_by(key="smtp_port").first()
-    smtp_server = SiteSetting.query.filter_by(key="server").first()
-    smtp_pass = SiteSetting.query.filter_by(key="smtp_pass").first()
-    if Logo.filename == '':
-        pass
-    else:
-        filename = secure_filename(Logo.filename)
-        upload_files = "uploads"
-        os.makedirs(upload_files,exist_ok=True)
-        filepath = os.path.join(upload_files,filename)
-        Logo.save(filepath)
-        if logo:
-            logo.Value = filepath
+def DF_P(app):
+
+
+    with app.app_context():
+        customer = Roles.query.filter_by(name="Customer").first()
+        admin = Roles.query.filter_by(name="Admin").first()
+
+        if not customer:
+            c = Roles(name='Customer', description='Buys stuff from shop')
+            db.session.add(c)
+            db.session.commit()
+            customer = c  # now customer is not None
+
+        if not admin:
+            a = Roles(name='Admin', description='Has access to config, edits the website, and can kick members')
+            db.session.add(a)
             db.session.commit()
 
-    if name:
-        print('name')
-        name.Value = Name
-        db.session.commit()
+    with app.app_context():
 
-    if smtp_user:
-        smtp_user.Value = user
-        db.session.commit()
-    if receiver_email:
-        print('email')
-        receiver_email.Value = reciever
-        db.session.commit()
-    if template:
-        template.Value = T
-        db.session.commit()
-    if installed:
-        installed.Value = Installed
-        db.session.commit()
-    if smtp_port:
-        print('port')
-        smtp_port.Value = smtp_po
-        db.session.commit()
+        view_u = Permision.query.filter_by(name="view users").first()
+        delete_u = Permision.query.filter_by(name="delete users").first()
+        view_p = Permision.query.filter_by(name="view products").first()
+        delete_p = Permision.query.filter_by(name="delete products").first()
+        add_p = Permision.query.filter_by(name="add products").first()
+        view_c =   Permision.query.filter_by(name="view categorys").first()
+        delete_c = Permision.query.filter_by(name="delete categorys").first()
+        add_c =   Permision.query.filter_by(name="add categorys").first()
+        buy_p =     Permision.query.filter_by(name="buy products").first()
 
-    if smtp_pass:
-        print('pass')
-        smtp_pass.Value = smtp_pa
-        db.session.commit()
-    if smtp_server:
-        smtp_server.Value = smtp_s
+
+
+        if not view_u:
+            l = Permision(name='view users')
+            db.session.add(l)
+            db.session.commit()
+        if not delete_u:
+            n = Permision(name='delete users')
+            db.session.add(n)
+            db.session.commit()
+        if not view_p:
+            installed = Permision(name='view products')
+            db.session.add(installed)
+            db.session.commit()
+
+        if not delete_p:
+            port = Permision(name="delete products")
+            db.session.add(port)
+            db.session.commit()
+
+        if not add_p:
+            server = Permision(name='add products')
+            db.session.add(server)
+            db.session.commit()
+
+        if not view_c:
+            passs = Permision(name="view categorys")
+            db.session.add(passs)
+            db.session.commit()
+
+        if not delete_c:
+            e = Permision(name='delete categorys')
+            db.session.add(e)
+            db.session.commit()
+        if not add_c:
+            ec = Permision(name='add categorys')
+            db.session.add(ec)
+            db.session.commit()
+        if not buy_p:
+            t = Permision(name='buy products')
+            db.session.add(t)
+            db.session.commit()
+def Add_Connection(app):
+    with app.app_context():
+        customer = Roles.query.filter_by(name="Customer").first()
+        admin = Roles.query.filter_by(name="Admin").first()
+        view_u = Permision.query.filter_by(name="view users").first()
+        delete_u = Permision.query.filter_by(name="delete users").first()
+        view_p = Permision.query.filter_by(name="view products").first()
+        delete_p = Permision.query.filter_by(name="delete products").first()
+        add_p = Permision.query.filter_by(name="add products").first()
+        view_c = Permision.query.filter_by(name="view categorys").first()
+        delete_c = Permision.query.filter_by(name="delete categorys").first()
+        add_c = Permision.query.filter_by(name="add categorys").first()
+        buy_p = Permision.query.filter_by(name="buy products").first()
+        customer.permissions.extend([view_u,view_p,view_c,buy_p])
+        admin.permissions.extend([view_u,view_p,view_c,buy_p,delete_u,delete_p,add_p,delete_c,add_c])
         db.session.commit()
