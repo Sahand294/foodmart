@@ -5,7 +5,7 @@ from models.sitesetting import SiteSetting
 from werkzeug.utils import secure_filename
 import os
 from default_connection import Connect
-from models import Users
+from models import Users,Roles
 def DF(app):
 
 
@@ -129,7 +129,9 @@ def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa,owneru
     if smtp_server:
         smtp_server.Value = smtp_s
         db.session.commit()
-
-    owner = Users(firstname=ownerfirstname,lastname=ownerlastname,password=ownerpassword,email=owneremail,username=ownerusername,roleid=4)
+    adminid = Roles.query.filter_by(name='Admin').first()
+    print(adminid)
+    owner = Users(firstname=ownerfirstname,lastname=ownerlastname,password=ownerpassword,email=owneremail,username=ownerusername,roleid=int(adminid.id))
     db.session.add(owner)
-    db.commit()
+    db.session.commit()
+

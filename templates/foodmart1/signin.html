@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="login-container">
+
         <h2>Make  Your Account</h2>
         <form action="/signup" method="POST">
             <label for="firstname">First name</label>
@@ -26,7 +27,9 @@
             <input type="password" id="password" name="password" required/>
 
             <button type="submit">singup</button>
+
         </form>
+        {% if  errors %}{{ errors }}{% endif %}
     </div>
 </body>
 </html>

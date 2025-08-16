@@ -1,8 +1,7 @@
 from . import db
 role_permissions = db.Table('role_permissions',
-                            db.Column('id',db.Integer,primary_key=True),
-                            db.Column('role_id', db.Integer, db.ForeignKey('roles.id'), primary_key=True),
-                            db.Column('permission_id', db.Integer, db.ForeignKey('permissions.id'), primary_key=True)
+                            db.Column('role_id', db.Integer, db.ForeignKey('roles.id')),
+                            db.Column('permission_id', db.Integer, db.ForeignKey('permissions.id'))
                             )
 class Users(db.Model):
     __tablename__ = 'users'
@@ -13,8 +12,9 @@ class Users(db.Model):
     email = db.Column(db.String(60),unique=True)
     password = db.Column(db.String(198))
     roleid = db.Column(db.Integer,db.ForeignKey('roles.id'))
-
+    cartid = db.Column(db.Integer,db.ForeignKey('carts.id'))
     role = db.relationship('Roles', back_populates='users')
+    cart = db.relationship('Carts', back_populates='users')
 
 class Roles(db.Model):
     __tablename__ = 'roles'

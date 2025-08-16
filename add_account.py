@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash,check_password_hash
 from models.users import   Users,Roles
 from models import db
-
+from models.cart import Carts
 class AddAccounts:
     @staticmethod
     def encrypting_password(password):
@@ -16,7 +16,11 @@ class AddAccounts:
         roleid = Roles.query.filter_by(name='Customer').first()
         print('created')
         new_password = AddAccounts.encrypting_password(password)
-        user = Users(firstname=firstname,lastname=lastname,username=username,email=email,password=new_password,roleid=int(roleid.id))
+        cart = Carts(name=username)
+        db.session.add(cart)
+        db.session.commit()
+        cartid = Carts.query.filter_by(name=username).first()
+        user = Users(firstname=firstname,lastname=lastname,username=username,email=email,password=new_password,roleid=int(roleid.id),cartid=int(cartid.id))
         db.session.add(user)
         db.session.commit()
         print('done')

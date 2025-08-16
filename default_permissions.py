@@ -1,6 +1,7 @@
 from models import Roles
 from models import db
 from models import Permision
+from sqlalchemy.exc import IntegrityError
 # from app import app
 from werkzeug.utils import secure_filename
 import os
@@ -90,5 +91,8 @@ def Add_Connection(app):
         add_c = Permision.query.filter_by(name="add categorys").first()
         buy_p = Permision.query.filter_by(name="buy products").first()
         customer.permissions.extend([view_u,view_p,view_c,buy_p])
-        admin.permissions.extend([view_u,view_p,view_c,buy_p,delete_u,delete_p,add_p,delete_c,add_c])
-        db.session.commit()
+        try:
+            admin.permissions.extend([view_u,view_p,view_c,buy_p,delete_u,delete_p,add_p,delete_c,add_c])
+            db.session.commit()
+        except IntegrityError as e:
+            pass

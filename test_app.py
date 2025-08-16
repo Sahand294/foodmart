@@ -8,6 +8,7 @@ db = SQLAlchemy(app)
 
 @app.route('/')
 def home():
+    print("111")
     return "Hello, World!"
 
 @app.errorhandler(401)

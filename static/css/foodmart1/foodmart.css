@@ -10,7 +10,13 @@ body {
     color: #333;
     background-color: #f8f9fa;
 }
-
+a{
+    color:white; !important;
+    text-decoration: none;
+}
+i{
+    color:white; !important;
+}
 /* Header */
 .header {
     background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
