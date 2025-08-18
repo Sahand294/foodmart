@@ -1,4 +1,5 @@
-from flask import Flask, render_template, session, url_for, request, redirect, flash, Blueprint
+from flask import Flask, render_template, session, url_for, request, redirect, flash, Blueprint, jsonify, \
+    render_template_string
 from flask_migrate import Migrate
 from config import Config
 from sending_emails import Send
@@ -12,9 +13,14 @@ from default_connection import Connect
 from default_permissions import DF_P,Add_Connection
 from models import Users
 from models.cart import Carts,CartProducts
-import os
+import stripe
 from models.products import Products
 from werkzeug.security import generate_password_hash,check_password_hash
+
+stripe.api_key = 'REMOVED_SECRETCu9lc'
+
+
+# it is up to date!
 def is_real_email(email):
     # Step 1: Validate format
     pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -42,6 +48,51 @@ app.secret_key = '123'
 db.init_app(app)
 migrate = Migrate(app, db)
 
+
+@app.route('/create_payment',methods=['POST'])
+def create_payment():
+    try:
+        intent = stripe.PaymentIntent.create(amount=1000,currency="usd",automatic_payment_methods={
+                'enabled': True,})
+        print(jsonify(clientSecret=intent.client_secret))
+        return jsonify(clientSecret=intent.client_secret)
+    except Exception as e:
+        return jsonify(error=str(e)), 400
+
+@app.route('/test_strip',methods=['POST','GET'])
+def test_pay():
+    html = """
+    <h1>Flask Payment Demo (No JavaScript)</h1>
+    <p>Click below to pay $10.00 using Stripe Checkout.</p>
+    <form action="/create-checkout-session" method="POST">
+        <button type="submit" style="padding:10px 20px; font-size:16px; cursor:pointer;">
+            💳 Pay $10.00 Now
+        </button>
+    </form>
+    """
+    return render_template_string(html)
+
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],  # Payment methods you want to allow
+        line_items=[
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": "Test Product",
+                    },
+                    "unit_amount": 2000,  # Amount in cents ($20.00)
+                },
+                "quantity": 1,
+            },
+        ],
+        mode="payment",  # Options: "payment", "setup", or "subscription"
+        success_url="https://127.0.0.1:5000/success?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url="https://127.0.0.1:5000/cancel"
+    )
+    return redirect(session.url)
 
 @app.route('/install', methods=['GET', 'POST'])
 def install():
@@ -100,7 +151,7 @@ def carts():
     global user
     P_amount = str(session['productamount'])
     logged = session['logged']
-    cartid = Carts.query.filter_by(name=session['username']).first()
+    cartid = Carts.query.filter_by(user=int(session['id'])).first()
     cart_items = CartProducts.query.filter_by(cartid=int(cartid.id)).all()
     product_ids = [item.productid for item in cart_items]
     products = []
@@ -135,27 +186,9 @@ def carts():
             cartitem = CartProducts.query.filter_by(productid=productid).first()
             db.session.delete(cartitem)
             db.session.commit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     P_amount = str(session['productamount'])
     logged = session['logged']
-    cartid = Carts.query.filter_by(name=session['username']).first()
+    cartid = Carts.query.filter_by(user=int(session['id'])).first()
     cart_items = CartProducts.query.filter_by(cartid=int(cartid.id)).all()
     product_ids = [item.productid for item in cart_items]
     products = []
@@ -168,43 +201,40 @@ def carts():
     return render_template('foodmart1/cartproducts.html',name=websitename,username=user,logged=logged,productamount=P_amount,products=products)
 
 
-
-
-
-
-
-
-
-
-
-
-
 @app.route('/add_to_cart',methods=['GET','POST'])
 def add_to_cart():
     if request.method == 'POST':
-        print(int(request.form['id']))
-        product = Products.query.filter_by(id=int(request.form['id'])).first()
-        if product:
-            print(product)
+        if session['logged']:
+            print(int(request.form['id']))
+            product = Products.query.filter_by(id=int(request.form['id'])).first()
+            if product:
+                print(product)
+            else:
+                print('nuh uh')
+            cart =     Carts.query.filter_by(user=int(session['id'])).first()
+            cart_product = CartProducts.query.filter_by(cartid=int(cart.id),productid=int(product.id)).first()
+            if cart_product:
+                cart_product.amount += 1
+                product.stock -= 1
+                db.session.commit()
+            else:
+                print()
+                relation = CartProducts(cartid=int(cart.id),productid=int(product.id),amount=1)
+                product.stock -= 1
+                db.session.add(relation)
+                db.session.commit()
+            session['productamount'] += 1
+            print(session['productamount'])
+            return (redirect(url_for('home')))
         else:
-            print('nuh uh')
-        cart =     Carts.query.filter_by(name=session['username']).first()
-        cart_product = CartProducts.query.filter_by(cartid=int(cart.id),productid=int(product.id)).first()
-        if cart_product:
-            cart_product.amount += 1
-            product.stock -= 1
-            db.session.commit()
-        else:
-            print()
-            relation = CartProducts(cartid=int(cart.id),productid=int(product.id),amount=1)
-            product.stock -= 1
-            db.session.add(relation)
-            db.session.commit()
-        session['productamount'] += 1
-        print(session['productamount'])
-    return(redirect(url_for('home')))
+            session['cart-message'] = 'Not logged in'
+            return redirect(url_for('home'))
+
+
 @app.route('/',methods=['GET','POST'])
 def home():
+    # if 'cart-message' in session:
+    #     del session['cart-message']
     if 'logged' not in session:
         session['logged'] = False
     if 'productamount' not in session:
@@ -224,13 +254,49 @@ def home():
     amount = str(session['productamount'])
     logged = session['logged']
     print(logged,user)
-    return render_template('foodmart1/main2.html',name=websitename,username=user,logged=logged,productamount=amount)
+    message = ''
+    if 'cart-message' in session:
+        message = session['cart-message']
+    return render_template('foodmart1/main2.html',name=websitename,username=user,logged=logged,productamount=amount,message=message)
+@app.route('/products')
+def products():
+    if 'cart-message' in session:
+        session['cart-message'] = ''
+    if 'logged' not in session:
+        session['logged'] = False
+    if 'productamount' not in session:
+        session['productamount'] = 0
+
+    global user
+    websitename = Connect.get_value('Name')
+    user = ''
+    if 'username' in session and session['logged']:
+            user = session['username']
+    if request.method == 'POST':
+        if request.form.get("action") == "logout":
+            session['logged'] = False
+            session['productamount'] = 0
+            del session['username']
+            del session['password']
+    amount = str(session['productamount'])
+    logged = session['logged']
+
+
+    products = []
+    P = Products.query.all()
+    message = ''
+    if 'cart-message' in session:
+        message = session['cart-message']
+    for i in P:
+        products.append(i)
+    return render_template('foodmart1/products.html',name=websitename,username=user,logged=logged,productamount=amount,products=products,message=message)
 
 
 
 
 @app.route('/contact_us', methods=['GET', 'POST'])
 def contact_us():
+    session['cart-message'] = ''
     global name, user
     if 'websitename' in session:
         name=session['websitename']
@@ -255,14 +321,30 @@ def contact_us():
             flash(f'Failed to send message: {str(e)}', 'error')
 
         return redirect(url_for('contact_us'))
-
+    if 'logged' not in session:
+        session['logged'] = False
+    if 'productamount' not in session:
+        session['productamount'] = 0
+    websitename = Connect.get_value('Name')
+    user = ''
+    if 'username' in session and session['logged']:
+            user = session['username']
+    if request.method == 'POST':
+        if request.form.get("action") == "logout":
+            session['logged'] = False
+            session['productamount'] = 0
+            del session['username']
+            del session['password']
+    amount = str(session['productamount'])
+    logged = session['logged']
     # GET request - just render the contact form
     logged = session['logged']
-    return render_template('foodmart1/contact-us.html',name=name,username=user,logged=logged)
+    return render_template('foodmart1/contact-us.html',name=websitename,username=user,logged=logged,productamount=amount)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    session['cart-message'] = ''
     print('starting')
     if request.method == 'POST':
         print('alright doing good')
@@ -274,8 +356,9 @@ def login():
         if user:
             if check_password_hash(user.password,password):
                 print('password is right')
-                session['username'] = request.form['username']
-                session['password'] = request.form['password']
+                session['username'] = user.username
+                session['password'] = user.password
+                session['id'] = int(user.id)
                 session['logged'] = True
                 return redirect(url_for('home'))
             else:
@@ -287,6 +370,7 @@ def login():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def Admin():
+    session['cart-message'] = ''
     if request.method == 'POST':
         session['username'] = request.form['username']
         session['password'] = request.form['password']
@@ -294,17 +378,31 @@ def Admin():
 
 @app.route('/about_us',methods=['GET','POST'])
 def about_us():
-    global name,user
-    if 'websitename' in session:
-        websitename=session['websitename']
-    if 'username' in session:
-        user=session['username']
+    session['cart-message'] = ''
+    if 'logged' not in session:
+        session['logged'] = False
+    if 'productamount' not in session:
+        session['productamount'] = 0
+
+    global user
+    websitename = Connect.get_value('Name')
+    user = ''
+    if 'username' in session and session['logged']:
+            user = session['username']
+    if request.method == 'POST':
+        if request.form.get("action") == "logout":
+            session['logged'] = False
+            session['productamount'] = 0
+            del session['username']
+            del session['password']
+    amount = str(session['productamount'])
     logged = session['logged']
-    return render_template('foodmart1/about_us.html',name=websitename,username=user,logged=logged)
+    return render_template('foodmart1/about_us.html',name=websitename,username=user,logged=logged,productamount=amount)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    session['cart-message'] = ''
     print('making account')
     mistakes = []
     if request.method == 'POST':
