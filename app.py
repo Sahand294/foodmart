@@ -17,7 +17,7 @@ import stripe
 from models.products import Products
 from werkzeug.security import generate_password_hash,check_password_hash
 
-stripe.api_key = 'REMOVED_SECRETCu9lc'
+stripe.api_key = 'sk_test_51Rwqpz0M2bkbpgp4C8dRHIgQ0TnQ2XG7d6D3Nb6a7YX2mkxs1u6EpSyFWfYjNaQ9mmjVGd8wHElenABlWqmfxXQq00GJ6Cu9lc'
 
 
 # it is up to date!
