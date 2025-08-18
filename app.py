@@ -16,9 +16,9 @@ from models.cart import Carts,CartProducts
 import stripe
 from models.products import Products
 from werkzeug.security import generate_password_hash,check_password_hash
-
-
-
+from dotenv import load_dotenv
+import os
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 # it is up to date!
 def is_real_email(email):
     # Step 1: Validate format
