@@ -12,7 +12,6 @@ class Users(db.Model):
     email = db.Column(db.String(60),unique=True)
     password = db.Column(db.String(198))
     roleid = db.Column(db.Integer,db.ForeignKey('roles.id'))
-    cartid = db.Column(db.Integer,db.ForeignKey('carts.id'))
     role = db.relationship('Roles', back_populates='users')
     cart = db.relationship('Carts', back_populates='users')
 

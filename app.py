@@ -148,8 +148,6 @@ def install():
 @app.route('/cart',methods=['GET','POST'])
 def carts():
     global user
-    P_amount = str(session['productamount'])
-    logged = session['logged']
     cartid = Carts.query.filter_by(user=int(session['id'])).first()
     cart_items = CartProducts.query.filter_by(cartid=int(cartid.id)).all()
     product_ids = [item.productid for item in cart_items]
@@ -237,7 +235,17 @@ def home():
     if 'logged' not in session:
         session['logged'] = False
     if 'productamount' not in session:
-        session['productamount'] = 0
+        if session['logged']:
+            cart = Carts.query.filter_by(user=int(session['id'])).first()
+            cartitems = CartProducts.query.filter_by(cartid=int(cart.id)).all()
+
+            amount = 0
+            for i in cartitems:
+                print(i,i.amount)
+                amount += int(i.amount)
+            session['productamount'] = amount
+        else:
+            session['productamount'] = 0
 
     global user
     websitename = Connect.get_value('Name')
@@ -263,8 +271,8 @@ def products():
         session['cart-message'] = ''
     if 'logged' not in session:
         session['logged'] = False
-    if 'productamount' not in session:
-        session['productamount'] = 0
+    # if 'productamount' not in session:
+    #     session['productamount'] = 0
 
     global user
     websitename = Connect.get_value('Name')
@@ -322,8 +330,8 @@ def contact_us():
         return redirect(url_for('contact_us'))
     if 'logged' not in session:
         session['logged'] = False
-    if 'productamount' not in session:
-        session['productamount'] = 0
+    # if 'productamount' not in session:
+    #     session['productamount'] = 0
     websitename = Connect.get_value('Name')
     user = ''
     if 'username' in session and session['logged']:
@@ -359,6 +367,14 @@ def login():
                 session['password'] = user.password
                 session['id'] = int(user.id)
                 session['logged'] = True
+                cart = Carts.query.filter_by(user=int(session['id'])).first()
+                cartitems = CartProducts.query.filter_by(cartid=int(cart.id)).all()
+
+                amount = 0
+                for i in cartitems:
+                    print(i, i.amount)
+                    amount += int(i.amount)
+                session['productamount'] = amount
                 return redirect(url_for('home'))
             else:
                 return redirect(url_for('error'))
@@ -380,8 +396,8 @@ def about_us():
     session['cart-message'] = ''
     if 'logged' not in session:
         session['logged'] = False
-    if 'productamount' not in session:
-        session['productamount'] = 0
+    # if 'productamount' not in session:
+    #     session['productamount'] = 0
 
     global user
     websitename = Connect.get_value('Name')

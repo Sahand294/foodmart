@@ -1,0 +1,37 @@
+{% extends 'foodmart1/main2.html' %}
+{% block title %}
+    about us
+{% endblock %}
+{% block css %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Parastoo:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/foodmart1/about-us.css') }}">
+{% endblock %}
+{% block content %}
+    <section class="products-section" id="products">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            <div class="products-grid">
+                {% for i in products %}
+                <div class="product-card">
+                    <div class="product-image">
+                        <i class="{{ i.image }}"></i>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">{{ i.name }}</h3>
+                        <p class="product-description">{{ i.about }}</p>
+                        <div class="product-price">{{ i.price }}$</div>
+                        <form action="/add_to_cart" method="POST">
+                            <input type="hidden" name="id" value="{{ i.id }}">
+                            <button class="add-to-cart" type="submit">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

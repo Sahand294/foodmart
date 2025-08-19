@@ -3,7 +3,7 @@ import datetime
 class Products(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer,primary_key=True)
-    color = db.Column(db.String(100),nullable=True)
+    image = db.Column(db.String(100),nullable=False)
     stock = db.Column(db.Integer)
     price = db.Column(db.Integer)
     name = db.Column(db.String(200))

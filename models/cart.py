@@ -8,7 +8,7 @@ from models.products import Products
 class Carts(db.Model):
     __tablename__ = 'carts'
     id = db.Column(db.Integer,primary_key=True)
-    name= db.Column(db.String(100))
+    user = db.Column(db.Integer,db.ForeignKey('users.id'),unique=True)
     users = db.relationship('Users', back_populates='cart', lazy=True)
     cart_products = db.relationship('CartProducts', back_populates="cart")
 class CartProducts(db.Model):
