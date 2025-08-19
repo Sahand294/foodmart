@@ -220,12 +220,14 @@ def add_to_cart():
                 product.stock -= 1
                 db.session.add(relation)
                 db.session.commit()
+            location = request.form['location']
             session['productamount'] += 1
             print(session['productamount'])
-            return (redirect(url_for('home')))
+            return (redirect(url_for(str(location))))
         else:
+            location = request.form['location']
             session['cart-message'] = 'Not logged in'
-            return redirect(url_for('home'))
+            return redirect(url_for(str(location)))
 
 
 @app.route('/',methods=['GET','POST'])
@@ -252,12 +254,6 @@ def home():
     user = ''
     if 'username' in session and session['logged']:
             user = session['username']
-    if request.method == 'POST':
-        if request.form.get("action") == "logout":
-            session['logged'] = False
-            session['productamount'] = 0
-            del session['username']
-            del session['password']
     amount = str(session['productamount'])
     logged = session['logged']
     print(logged,user)
@@ -267,8 +263,8 @@ def home():
     return render_template('foodmart1/main2.html',name=websitename,username=user,logged=logged,productamount=amount,message=message)
 @app.route('/products')
 def products():
-    if 'cart-message' in session:
-        session['cart-message'] = ''
+    # if 'cart-message' in session:
+    #     session['cart-message'] = ''
     if 'logged' not in session:
         session['logged'] = False
     # if 'productamount' not in session:
@@ -279,12 +275,6 @@ def products():
     user = ''
     if 'username' in session and session['logged']:
             user = session['username']
-    if request.method == 'POST':
-        if request.form.get("action") == "logout":
-            session['logged'] = False
-            session['productamount'] = 0
-            del session['username']
-            del session['password']
     amount = str(session['productamount'])
     logged = session['logged']
 
@@ -298,8 +288,15 @@ def products():
         products.append(i)
     return render_template('foodmart1/products.html',name=websitename,username=user,logged=logged,productamount=amount,products=products,message=message)
 
-
-
+@app.route('/loggout',methods=['GET','POST'])
+def loggout():
+    if request.method == 'POST':
+        if request.form.get("action") == "logout":
+            session['logged'] = False
+            session['productamount'] = 0
+            del session['username']
+            del session['password']
+            return redirect(url_for('home'))
 
 @app.route('/contact_us', methods=['GET', 'POST'])
 def contact_us():
@@ -336,12 +333,6 @@ def contact_us():
     user = ''
     if 'username' in session and session['logged']:
             user = session['username']
-    if request.method == 'POST':
-        if request.form.get("action") == "logout":
-            session['logged'] = False
-            session['productamount'] = 0
-            del session['username']
-            del session['password']
     amount = str(session['productamount'])
     logged = session['logged']
     # GET request - just render the contact form
@@ -404,12 +395,6 @@ def about_us():
     user = ''
     if 'username' in session and session['logged']:
             user = session['username']
-    if request.method == 'POST':
-        if request.form.get("action") == "logout":
-            session['logged'] = False
-            session['productamount'] = 0
-            del session['username']
-            del session['password']
     amount = str(session['productamount'])
     logged = session['logged']
     return render_template('foodmart1/about_us.html',name=websitename,username=user,logged=logged,productamount=amount)

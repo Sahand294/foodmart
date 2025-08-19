@@ -24,6 +24,7 @@
                         <div class="product-price">{{ i.price }}$</div>
                         <form action="/add_to_cart" method="POST">
                             <input type="hidden" name="id" value="{{ i.id }}">
+                            <input type="hidden" name="location" value="products">
                             <button class="add-to-cart" type="submit">
                                 <i class="fas fa-cart-plus"></i> Add to Cart
                             </button>
