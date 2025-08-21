@@ -211,17 +211,25 @@ def add_to_cart():
             cart =     Carts.query.filter_by(user=int(session['id'])).first()
             cart_product = CartProducts.query.filter_by(cartid=int(cart.id),productid=int(product.id)).first()
             if cart_product:
-                cart_product.amount += 1
-                product.stock -= 1
-                db.session.commit()
+                if product.stock == 0:
+                    session['cart-message'] = 'sorry we have ran out!'
+                else:
+                    cart_product.amount += 1
+                    product.stock -= 1
+                    db.session.commit()
+                    session['productamount'] += 1
             else:
                 print()
-                relation = CartProducts(cartid=int(cart.id),productid=int(product.id),amount=1)
-                product.stock -= 1
-                db.session.add(relation)
-                db.session.commit()
+                if product.stock == 0:
+                    session['cart-message'] = 'sorry we have ran out!'
+                else:
+                    relation = CartProducts(cartid=int(cart.id),productid=int(product.id),amount=1)
+                    product.stock -= 1
+                    db.session.add(relation)
+                    db.session.commit()
+                    session['productamount'] += 1
             location = request.form['location']
-            session['productamount'] += 1
+
             print(session['productamount'])
             return (redirect(url_for(str(location))))
         else:
@@ -285,7 +293,10 @@ def products():
     if 'cart-message' in session:
         message = session['cart-message']
     for i in P:
-        products.append(i)
+        if i.stock == 0:
+            pass
+        else:
+            products.append(i)
     return render_template('foodmart1/products.html',name=websitename,username=user,logged=logged,productamount=amount,products=products,message=message)
 
 @app.route('/loggout',methods=['GET','POST'])
