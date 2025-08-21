@@ -147,6 +147,7 @@ def install():
 
 @app.route('/cart',methods=['GET','POST'])
 def carts():
+    # session['productamount'] = 0
     global user
     cartid = Carts.query.filter_by(user=int(session['id'])).first()
     cart_items = CartProducts.query.filter_by(cartid=int(cartid.id)).all()
@@ -183,6 +184,41 @@ def carts():
             cartitem = CartProducts.query.filter_by(productid=productid).first()
             db.session.delete(cartitem)
             db.session.commit()
+
+
+
+
+
+
+
+
+
+
+
+        if request.form.get("add1") == "add1":
+            print(int(request.form['id']))
+            product = Products.query.filter_by(id=int(request.form['id'])).first()
+            if product:
+                print(product)
+            else:
+                print('nuh uh')
+            cart = Carts.query.filter_by(user=int(session['id'])).first()
+            cart_product = CartProducts.query.filter_by(cartid=int(cart.id), productid=int(product.id)).first()
+            if product.stock == 0:
+                session['cart-message'] = 'sorry we have ran out!'
+            else:
+                print('adding')
+                cart_product.amount += 1
+                product.stock -= 1
+                db.session.commit()
+                session['productamount'] += 1
+            print(session['productamount'])
+
+
+
+
+
+
     P_amount = str(session['productamount'])
     logged = session['logged']
     cartid = Carts.query.filter_by(user=int(session['id'])).first()
@@ -194,7 +230,6 @@ def carts():
         amounts = CartProducts.query.filter_by(productid=int(x.id)).first()
         amount = amounts.amount
         products.append([x,amount])
-        print(x.price,amount)
     return render_template('foodmart1/cartproducts.html',name=websitename,username=user,logged=logged,productamount=P_amount,products=products)
 
 
