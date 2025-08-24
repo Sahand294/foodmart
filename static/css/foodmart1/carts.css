@@ -26,6 +26,7 @@ body {
     flex: 3;!important;
     padding-right: 40px;!important;
     gap:40px; !important;
+    flex-direction: row; !important;
 
 }
 
@@ -42,7 +43,7 @@ body {
 
 .product-price {
     display:flex;
-    width: 600rem;
+    /*width: 600rem;*/
     font-size: 5rem;
     color: #4CAF50;
     font-weight: 600;
@@ -54,7 +55,7 @@ body {
 }
 
 .product-amount {
-    margin-left:200px;
+    /*margin-left:200px;*/
     width: 500px;
     /*display:flex;*/
     justify-self: left;
@@ -70,7 +71,7 @@ body {
 
 .cart-buttons {
     display: flex;
-    flex-direction: column;
+    /*flex-direction: column;*/
     gap: 10px;
 }
 
@@ -89,6 +90,9 @@ body {
 }
 
 .btn-remove-one {
+    align-self: center;
+    height: max-content;
+    margin-left: 100px;
     background-color: #FFA726;
     color: #fff;
 }
@@ -99,6 +103,8 @@ body {
 }
 
 .btn-buy {
+    align-self: center;
+    height: max-content;
     background-color: #4CAF50;
     color: #fff;
 }

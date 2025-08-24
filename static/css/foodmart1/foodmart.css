@@ -308,6 +308,7 @@ i{
 
 /* Footer */
 .footer {
+    bottom:0; !important;
     background: #2c3e50;
     color: white;
     padding: 40px 0 20px;

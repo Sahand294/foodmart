@@ -17,7 +17,7 @@
     <div class="nav-container">
         <a href="#" class="logo">
             <i class="fas fa-utensils"></i>
-            {% if name %}{{ name }}{% endif %}{% if logged %}{% if username %}<p></p>Hello  {{ username }}
+            {% if name %}{{ name }}{% endif %}{% if logged %}{% if username %}, Hello  {{ username }}
             {% endif %}{% endif %}<p></p>{% if message %}{{ message }}{% endif %}
         </a>
         <nav>

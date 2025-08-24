@@ -48,50 +48,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 
-@app.route('/create_payment',methods=['POST'])
-def create_payment():
-    try:
-        intent = stripe.PaymentIntent.create(amount=1000,currency="usd",automatic_payment_methods={
-                'enabled': True,})
-        print(jsonify(clientSecret=intent.client_secret))
-        return jsonify(clientSecret=intent.client_secret)
-    except Exception as e:
-        return jsonify(error=str(e)), 400
-
-@app.route('/test_strip',methods=['POST','GET'])
-def test_pay():
-    html = """
-    <h1>Flask Payment Demo (No JavaScript)</h1>
-    <p>Click below to pay $10.00 using Stripe Checkout.</p>
-    <form action="/create-checkout-session" method="POST">
-        <button type="submit" style="padding:10px 20px; font-size:16px; cursor:pointer;">
-            💳 Pay $10.00 Now
-        </button>
-    </form>
-    """
-    return render_template_string(html)
-
-@app.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],  # Payment methods you want to allow
-        line_items=[
-            {
-                "price_data": {
-                    "currency": "usd",
-                    "product_data": {
-                        "name": "Test Product",
-                    },
-                    "unit_amount": 2000,  # Amount in cents ($20.00)
-                },
-                "quantity": 1,
-            },
-        ],
-        mode="payment",  # Options: "payment", "setup", or "subscription"
-        success_url="https://127.0.0.1:5000/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url="https://127.0.0.1:5000/cancel"
-    )
-    return redirect(session.url)
 
 @app.route('/install', methods=['GET', 'POST'])
 def install():
