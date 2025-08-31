@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h2>edit the product</h2>
+        <form action="/edit_product" method="POST">
+            {% if  info  %}
+                <input type="hidden" id="id" name="id" value="{{ info.id }}" required/>
+            <label for="image">image:{{ info.image }}</label>
+            <input type="text" id="image" name="image" placeholder="{{ info.image }}" required/>
+            <label for="stock">stock:{{ info.stock }}</label>
+            <input type="text" id="stock" name="stock" placeholder="{{ info.stock }}" required/>
+            <label for="name">name:{{ info.name }}</label>
+            <input type="text" id="name" name="name"  placeholder="{{ info.name }}" required/>
+            <label for="price">price:{{ info.price }}</label>
+            <input type="text" id="price" name="price"  placeholder="{{ info.price }}" required/>
+            <label for="desc">description:{{ info.about }}</label>
+            <input type="text" id="desc" name="desc" placeholder="{{ info.about }}" required/>
+            <label for="category">category:{{ info.category }}</label>
+            <input type="text" id="category" name="category" placeholder="{{ info.category }}" required/>
+            <button type="submit">edit Product</button>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>

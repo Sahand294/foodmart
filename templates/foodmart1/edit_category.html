@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+<div class="login-container">
+    <h2>edit the category</h2>
+    <form method="POST">
+        {% if  info %}
+            <input type="hidden" id="id" name="id" value="{{ info.id }}" required/>
+            <label for="name">name:{{ info.name }}</label>
+            <input type="text" id="name" name="name" required/>
+            <label for="desc">description:{{ info.about }}</label>
+            <input type="text" id="desc" name="desc" required/>
+            <button type="submit">edit Category</button>
+        {% endif %}
+    </form>
+</div>
+</body>
+</html>

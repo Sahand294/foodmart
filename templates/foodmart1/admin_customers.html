@@ -1,0 +1,57 @@
+{% extends "foodmart1/dashboard.html" %}
+
+{% block title %}Products - Admin{% endblock %}
+
+{% block css %}
+<style>
+  .grid-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .product-card, .add-card {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--panel);
+    border: 1px solid rgba(100,116,139,.25);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px;
+    text-align: center;
+  }
+  .add-card {
+    border: 2px dashed rgba(100,116,139,.35);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="grid-products">
+  {% for p in p %}
+  <div class="product-card">
+    <div class="product-name">{{ p.email }}</div>
+    <div>{{ p.firstname }},{{ p.lastname }}</div>
+    <div class="product-actions">
+        <form method="POST" action="/admin_products">
+            <input type="hidden" name="id" value="{{ p.id }}">
+      <button class="btn" type="submit" name="edit" value="confirm">✏️ Edit</button>
+            </form>
+        <form method="POST" action="/admin_products">
+            <input type="hidden" name="id" value="{{ p.id }}">
+      <button class="btn" name="remove1" value="remove1">🗑️ Remove</button>
+            </form>
+    </div>
+  </div>
+  {% endfor %}
+<form method="POST" action="/admin_products">
+  <button class="add-card" type="submit" name="add_pro" value="confirmed">+ Add Customer</button>
+    </form>
+</div>
+{% endblock %}

@@ -36,7 +36,6 @@ def DF_P(app):
         buy_p =     Permision.query.filter_by(name="buy products").first()
 
 
-
         if not view_u:
             l = Permision(name='view users')
             db.session.add(l)

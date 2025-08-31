@@ -11,9 +11,11 @@ from models import db
 from models.sitesetting import SiteSetting
 from default_connection import Connect
 from default_permissions import DF_P,Add_Connection
-from models import Users
+from models import Users,Roles
 from models.cart import Carts,CartProducts
 import stripe
+from models.manytomany import CategoryAndProduct
+from models.category import Category
 from models.products import Products
 from werkzeug.security import generate_password_hash,check_password_hash
 from dotenv import load_dotenv
@@ -46,9 +48,6 @@ app.config.from_object(Config)
 app.secret_key = '123'
 db.init_app(app)
 migrate = Migrate(app, db)
-
-
-
 @app.route('/install', methods=['GET', 'POST'])
 def install():
     global app
@@ -93,13 +92,168 @@ def install():
         return redirect(url_for('home'))
 
     return render_template('foodmart1/install.html')
+@app.route('/admin_products',methods=["POST","GET"])
+def admin_products():
+    if request.method == "POST":
+        if request.form.get('remove1') == "remove1":
+            id = int(request.form['id'])
+            p = Products.query.filter_by(id=id).first()
+            relation = CategoryAndProduct.query.filter_by(productid=p.id).first()
+            db.session.delete(relation)
+            db.session.delete(p)
+            db.session.commit()
+        elif request.form.get('edit') == 'confirm':
+            session['productid'] = request.form['id']
+            return  redirect(url_for('edit_product'))
+        else:
+            return redirect(url_for('add_product'))
+    products = Products.query.all()
+    p = []
+    for i in products:
+        p.append(i)
+    return render_template('foodmart1/admin_products.html',product=p)
+@app.route('/admin_categorys',methods=['GET','POST'])
+def admin_category():
+    if request.method == 'POST':
+        if request.form.get('remove1') == "remove1":
+            id = int(request.form['id'])
+            ps = []
+            relation = CategoryAndProduct.query.filter_by(categoryid=id).all()
+            for i in relation:
+                x = Products.query.filter_by(id=i.productid).first()
+                ps.append(x)
+            for i in ps:
+                if i:
+                    r = CategoryAndProduct.query.filter_by(productid=i.id).first()
+                    db.session.delete(r)
+                    db.session.commit()
+            for i in ps:
+                if i:
+                    db.session.delete(i)
+                    db.session.commit()
+            c = Category.query.filter_by(id=id).first()
+            db.session.delete(c)
+            db.session.commit()
+        elif request.form.get('edit') == 'confirm':
+            # print(request.form['id'],'hihihitrhjoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisgtr\ng\ng\ng\ng\ng\ng\ng\ng\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+            session['categoryid'] = request.form['id']
+            return  redirect(url_for('edit_category'))
+        else:
+            return redirect(url_for('add_category'))
+    category = Category.query.all()
+    cat = []
+    for i in category:
+        cat.append(i)
+    return render_template('foodmart1/admin_category.html',category=cat)
+@app.route('/admin_customers',methods=['GET','POST'])
+def admin_customer():
+    if request.method == 'POST':
+        if request.form.get('remove1') == "remove1":
+            id = int(request.form['id'])
+            p = Users.query.filter_by(id=id).first()
+            relation = CategoryAndProduct.query.filter_by(productid=p.id).first()
+            db.session.delete(relation)
+            db.session.delete(p)
+            db.session.commit()
+    users = []
+    u = Users.query.all()
+    for i in u:
+        users.append(i)
+    return render_template('foodmart1/admin_customers.html',p=users)
+@app.route('/add_category',methods=["GET","POST"])
+def add_category():
+    if request.method == "POST":
+        name = request.form['name']
+        desc = request.form['desc']
+        cat = Category(name=name,description=desc)
+        db.session.add(cat)
+        db.session.commit()
+        return redirect(url_for('admin_category'))
+    return render_template('foodmart1/add_category.html')
+@app.route('/add_product',methods=["POST","GET"])
+def add_product():
+    if request.method == "POST":
+        print('in proccess')
+        name = request.form['name']
+        desc = request.form['desc']
+        price = request.form['price']
+        stock = request.form['stock']
+        image = request.form['image']
+        category = request.form['category']
+        print('done variebles')
 
+        cat = Products(name=name,about=desc,price=int(price),stock=int(stock),image=image)
+        db.session.add(cat)
+        db.session.commit()
+        relation = CategoryAndProduct(productid=cat.id,categoryid=int(category))
 
+        db.session.add(relation)
+        db.session.commit()
+        print('done')
+        return redirect(url_for('admin_products'))
+    return render_template('foodmart1/add_product.html')
+@app.route('/edit_category',methods=["POST","GET"])
+def edit_category():
+    id = int(session['categoryid'])
+    # print(id,type(id))
+    if request.method == 'POST':
+        print('in proccess')
+        name = request.form['name']
+        desc = request.form['desc']
+        print(desc)
+        id = int(session['categoryid'])
+        print('cat debugg start')
+        cat = Category.query.filter_by(id=int(id)).first()
+        print('cat debugg end')
+        if cat:
+            print('yooooo')
+            cat.name = name
+            cat.description = desc
+            db.session.commit()
+        else:
+            print("No product found with id", id)
+        print('done')
+        return redirect(url_for('admin_category'))
+    i = Category.query.filter_by(id=id).first()
+    return render_template('foodmart1/edit_category.html',info=i)
+@app.route('/edit_product',methods=['POST','GET'])
+def edit_product():
+    id = int(session['productid'])
+    print(id,type(id))
+    if request.method == 'POST':
+        print('in proccess')
+        name = request.form['name']
+        desc = request.form['desc']
+        price = request.form['price']
+        stock = request.form['stock']
+        image = request.form['image']
+        category = request.form['category']
+        print("Session contents:", dict(session))
+        try:
+            id = int(session['productid'])
+            print("Got id from session:", id)
+        except Exception as e:
+            print("Problem with session['categoryid']:", e)
+            return "No id found in session", 400
 
-
-
-
-
+        print('cat debugg start')
+        cat = Products.query.filter_by(id=int(id)).first()
+        print('cat debugg end')
+        if cat:
+            print('yooooo')
+            cat.name = name
+            cat.about = desc
+            cat.price = price
+            cat.stock = stock
+            cat.image = image
+            cat.category = category
+            db.session.commit()
+        else:
+            print("No product found with id", id)
+        print('done')
+        return redirect(url_for('admin_products'))
+    i = Products.query.filter_by(id=id).first()
+    return render_template('foodmart1/edit_product.html',info=i)
 
 @app.route('/cart',methods=['GET','POST'])
 def carts():
@@ -434,7 +588,38 @@ def signup():
         return redirect(url_for('home'))
     return render_template('foodmart1/signin.html',errors=mistakes)
 
+@app.route('/admin_login',methods=['GET','POST'])
+def admin_login():
+    if request.method == 'POST':
+        print('alright doing good')
+        password = request.form['password']
+        username = request.form['username']
+        print('lol')
+        adminrole = Roles.query.filter_by(name='Admin').first()
+        user = Users.query.filter_by(username=username).first()
+        print('finding account')
+        if user:
+            if check_password_hash(user.password,password):
+                print('password is right')
+                session['username'] = user.username
+                session['password'] = user.password
+                session['id'] = int(user.id)
+                session['logged'] = True
+                if int(user.roleid) == int(adminrole):
+                    pass
+                else:
+                    return redirect(url_for('error'))
 
+            else:
+                return redirect(url_for('error'))
+        else:
+            return redirect(url_for('error'))
+        return redirect(url_for('dashboard'))
+    return render_template('footmart1/admin_login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('foodmart1/dashboard.html')
 @app.errorhandler(401)
 def error401():
     return render_template('foodmart1/error.html')

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -305,15 +307,20 @@ i{
     font-weight: 600;
     margin-bottom: 1rem;
 }
-
-/* Footer */
 .footer {
-    bottom:0; !important;
     background: #2c3e50;
     color: white;
     padding: 40px 0 20px;
-}
 
+  /*position: fixed;*/
+  /*left: 0;*/
+  /*bottom: 0;*/
+  /*width: 100%;*/
+}
+main{
+    min-height: fit-content;
+    height: 505px;
+}
 .footer-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -429,3 +436,31 @@ i{
     color: #004085;
     border: 1px solid #b8daff;
 }
+
+
+.username-sample {
+margin: 1rem 0;
+font-size: 1.8rem;
+}
+.pacifico { font-family: 'Pacifico', cursive; color: #ffeb3b; }
+.poppins { font-family: 'Poppins', sans-serif; font-weight: 600; color: #ffeb3b; }
+.baloo { font-family: 'Baloo 2', cursive; color: #ffeb3b; }
+.baloo-pacifico {
+    font-family: 'Baloo 2', 'Pacifico', cursive;
+    color: #ffeb3b;
+}
+.quicksand { font-family: 'Quicksand', sans-serif; font-weight: 600; color: #ffeb3b; }
+/* In your stylesheet */
+.medium-cursive {
+  font-family: 'Dancing Script', cursive;
+  font-weight: 500; /* Medium weight */
+  color: #ffeb3b;   /* Or any color that fits your design */
+}
+p {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 0;
+  margin-right: 0;
+}
+
