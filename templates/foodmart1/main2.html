@@ -26,7 +26,7 @@
             <i class="fas fa-utensils"></i>
             {% if name %}{{ name }}{% endif %}{% if logged %}
                 <h1 class="username-sample medium-cursive">{% if username %} Hello  {{ username }}
-            {% endif %}</h1>{% endif %}<p></p>{% if message %}{{ message }}{% endif %}
+            {% endif %}</h1>{% endif %}<p></p>{% if message %}<p></p>{{ message }}{% endif %}
         </h1>
         <nav>
             <ul class="nav-menu" id="navMenu">
@@ -193,6 +193,8 @@
         </div>
     </div>
 </footer>
+{% block java %}
+{% endblock %}
 <script src="{{ url_for('static',filename='js/foodmart1/final/base.js') }}"></script>
 </body>
 </html>

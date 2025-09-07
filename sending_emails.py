@@ -8,10 +8,11 @@ from models.sitesetting import SiteSetting
 
 class Send:
     @staticmethod
-    def send_mail(subject, sender_email, body):
+    def send_mail(subject, sender_email, body,receiver_email,contactus):
         smtp_user = Connect.get_value('smtp_user')
         smtp_pass = Connect.get_value("smtp_pass")
-        receiver_email = Connect.get_value("receiver_email")
+        if contactus:
+            receiver_email = Connect.get_value("receiver_email")
         smtp_server = Connect.get_value("server")
         smtp_port = Connect.get_value("smtp_port")
         # smtp_user = "foodmartstore874@gmail.com"
@@ -24,7 +25,10 @@ class Send:
         msg["From"] = smtp_user
         msg["To"] = receiver_email
         msg["Subject"] = subject
-        msg["Reply-To"] = sender_email
+        if contactus:
+            msg["Reply-To"] = sender_email
+        else:
+            msg["Reply-To"] = receiver_email
 
         msg.attach(MIMEText(body, "plain"))
 
