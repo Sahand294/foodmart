@@ -33,6 +33,7 @@ def generate_password(length=12):
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
+
 # it is up to date!
 def is_real_email(email):
     # Step 1: Validate format
@@ -106,294 +107,294 @@ def install():
 
     return render_template('foodmart1/install.html')
 
-
-@app.route('/admin_products', methods=["POST", "GET"])
-def admin_products():
-    if request.method == "POST":
-        if request.form.get('remove1') == "remove1":
-            id = int(request.form['id'])
-            p = Products.query.filter_by(id=id).first()
-            relation = CategoryAndProduct.query.filter_by(productid=p.id).first()
-            db.session.delete(relation)
-            db.session.delete(p)
-            db.session.commit()
-        elif request.form.get('edit') == 'confirm':
-            session['productid'] = request.form['id']
-            return redirect(url_for('edit_product'))
-        else:
-            return redirect(url_for('add_product'))
-    products = Products.query.all()
-    p = []
-    for i in products:
-        p.append(i)
-    return render_template('foodmart1/admin_products.html', product=p)
-
-
-@app.route('/admin_categorys', methods=['GET', 'POST'])
-def admin_category():
-    if request.method == 'POST':
-        if request.form.get('remove1') == "remove1":
-            id = int(request.form['id'])
-            ps = []
-            relation = CategoryAndProduct.query.filter_by(categoryid=id).all()
-            for i in relation:
-                x = Products.query.filter_by(id=i.productid).first()
-                ps.append(x)
-            for i in ps:
-                if i:
-                    r = CategoryAndProduct.query.filter_by(productid=i.id).first()
-                    db.session.delete(r)
-                    db.session.commit()
-            for i in ps:
-                if i:
-                    db.session.delete(i)
-                    db.session.commit()
-            c = Category.query.filter_by(id=id).first()
-            db.session.delete(c)
-            db.session.commit()
-        elif request.form.get('edit') == 'confirm':
-            # print(request.form['id'],'hihihitrhjoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisgtr\ng\ng\ng\ng\ng\ng\ng\ng\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
-            session['categoryid'] = request.form['id']
-            return redirect(url_for('edit_category'))
-        else:
-            return redirect(url_for('add_category'))
-    category = Category.query.all()
-    cat = []
-    for i in category:
-        cat.append(i)
-    return render_template('foodmart1/admin_category.html', category=cat)
-
-
-@app.route('/admin_customers', methods=['GET', 'POST'])
-def admin_customer():
-    if request.method == 'POST':
-        if request.form.get('remove1') == "remove1":
-            id = int(request.form['id'])
-            p = Users.query.filter_by(id=id).first()
-            cart = Carts.query.filter_by(user=int(p.id)).first()
-            relation = CartProducts.query.filter_by(cartid=cart.id).all()
-            try:
-                for i in relation:
-                    print(i.cartid)
-                    productid = int(i.productid)
-                    product = Products.query.filter_by(id=int(productid)).first()
-                    quantity = int(i.amount)
-                    product.stock += quantity
-                    cartitem = CartProducts.query.filter_by(productid=productid).first()
-                    db.session.delete(cartitem)
-                    db.session.commit()
-                db.session.delete(cart)
-                db.session.commit()
+if True:
+    @app.route('/admin_products', methods=["POST", "GET"])
+    def admin_products():
+        if request.method == "POST":
+            if request.form.get('remove1') == "remove1":
+                id = int(request.form['id'])
+                p = Products.query.filter_by(id=id).first()
+                relation = CategoryAndProduct.query.filter_by(productid=p.id).first()
+                db.session.delete(relation)
                 db.session.delete(p)
                 db.session.commit()
-            except:
-                print('not worked')
-        elif request.form.get('edit') == 'confirm':
-            print('going to it')
-            session['userid'] = request.form.get('id')
-            print(session['userid'])
-            return redirect(url_for('edit_customer'))
-    users = []
-    u = Users.query.all()
-    for i in u:
-        role = Roles.query.filter_by(id=int(i.roleid)).first()
-        if role.name == 'Customer':
-            users.append(i)
-    return render_template('foodmart1/admin_customers.html', p=users)
-
-@app.route('/edit_customer', methods=['POST', 'GET'])
-def edit_customer():
-    print(session['userid'])
-    u = Users.query.filter_by(id=int(session['userid'])).first()
-    # del session['userid']
-    if request.method == 'POST':
-        print('doing it')
-        firstname = request.form.get('firstname')
-        lastname = request.form.get('lastname')
-        username = request.form.get('username')
-        email = request.form.get('email')
-        print('saved stuff')
-        if not is_real_email(email):
-            mistakes.append("Email is Wrong")
-        else:
-            print('doing it')
-            password = generate_password()
-            subject = f"Hello {firstname}"
-            body =  f"""
-                            Hello {firstname} {lastname},
-                            
-                            Your account has been successfully created/updated by our administrator.
-                            
-                            Here are your login details:
-                            - Email: {email}
-                            - Username: {username}
-                            - Password: {password}
-                            - Firstname: {firstname}
-                            - Lastname: {lastname}
-                            
-                            For security, please log in and change your password as soon as possible:
-                            https://yourwebsite.com/login
-                            
-                            If you have any questions or need support, please contact us at support@yourwebsite.com.
-                            
-                            Best regards,
-                            The YourWebsite Team
-                            """
-
-            Send.send_mail(subject, email, body, email, False)
-            u.firstname = firstname
-            u.lastname = lastname
-            u.username = username
-            u.email = email
-            db.session.commit()
-            return redirect(url_for('dashboard'))
-    return render_template('foodmart1/edit_customers.html')
+            elif request.form.get('edit') == 'confirm':
+                session['productid'] = request.form['id']
+                return redirect(url_for('edit_product'))
+            else:
+                return redirect(url_for('add_product'))
+        products = Products.query.all()
+        p = []
+        for i in products:
+            p.append(i)
+        return render_template('foodmart1/admin_products.html', product=p)
 
 
-@app.route('/add_customers', methods=['POST', 'GET'])
-def add_customer():
-    global mistakes
-    if request.method == 'POST':
-        session['cart-message'] = ''
-        print('making account')
-        mistakes = []
+    @app.route('/admin_categorys', methods=['GET', 'POST'])
+    def admin_category():
         if request.method == 'POST':
-            firstname = request.form.get('firstname', '').strip()
-            lastname = request.form.get('lastname', '').strip()
-            email = request.form.get('email', '').strip()
-            username = request.form.get('username', '').strip()
+            if request.form.get('remove1') == "remove1":
+                id = int(request.form['id'])
+                ps = []
+                relation = CategoryAndProduct.query.filter_by(categoryid=id).all()
+                for i in relation:
+                    x = Products.query.filter_by(id=i.productid).first()
+                    ps.append(x)
+                for i in ps:
+                    if i:
+                        r = CategoryAndProduct.query.filter_by(productid=i.id).first()
+                        db.session.delete(r)
+                        db.session.commit()
+                for i in ps:
+                    if i:
+                        db.session.delete(i)
+                        db.session.commit()
+                c = Category.query.filter_by(id=id).first()
+                db.session.delete(c)
+                db.session.commit()
+            elif request.form.get('edit') == 'confirm':
+                # print(request.form['id'],'hihihitrhjoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisgtr\ng\ng\ng\ng\ng\ng\ng\ng\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+                session['categoryid'] = request.form['id']
+                return redirect(url_for('edit_category'))
+            else:
+                return redirect(url_for('add_category'))
+        category = Category.query.all()
+        cat = []
+        for i in category:
+            cat.append(i)
+        return render_template('foodmart1/admin_category.html', category=cat)
 
+
+    @app.route('/admin_customers', methods=['GET', 'POST'])
+    def admin_customer():
+        if request.method == 'POST':
+            if request.form.get('remove1') == "remove1":
+                id = int(request.form['id'])
+                p = Users.query.filter_by(id=id).first()
+                cart = Carts.query.filter_by(user=int(p.id)).first()
+                relation = CartProducts.query.filter_by(cartid=cart.id).all()
+                try:
+                    for i in relation:
+                        print(i.cartid)
+                        productid = int(i.productid)
+                        product = Products.query.filter_by(id=int(productid)).first()
+                        quantity = int(i.amount)
+                        product.stock += quantity
+                        cartitem = CartProducts.query.filter_by(productid=productid).first()
+                        db.session.delete(cartitem)
+                        db.session.commit()
+                    db.session.delete(cart)
+                    db.session.commit()
+                    db.session.delete(p)
+                    db.session.commit()
+                except:
+                    print('not worked')
+            elif request.form.get('edit') == 'confirm':
+                print('going to it')
+                session['userid'] = request.form.get('id')
+                print(session['userid'])
+                return redirect(url_for('edit_customer'))
+        users = []
+        u = Users.query.all()
+        for i in u:
+            role = Roles.query.filter_by(id=int(i.roleid)).first()
+            if role.name == 'Customer':
+                users.append(i)
+        return render_template('foodmart1/admin_customers.html', p=users)
+
+    @app.route('/edit_customer', methods=['POST', 'GET'])
+    def edit_customer():
+        print(session['userid'])
+        u = Users.query.filter_by(id=int(session['userid'])).first()
+        # del session['userid']
+        if request.method == 'POST':
+            print('doing it')
+            firstname = request.form.get('firstname')
+            lastname = request.form.get('lastname')
+            username = request.form.get('username')
+            email = request.form.get('email')
+            print('saved stuff')
             if not is_real_email(email):
                 mistakes.append("Email is Wrong")
             else:
+                print('doing it')
                 password = generate_password()
                 subject = f"Hello {firstname}"
-                body = f"""
+                body =  f"""
                                 Hello {firstname} {lastname},
-
+                                
                                 Your account has been successfully created/updated by our administrator.
-
+                                
                                 Here are your login details:
                                 - Email: {email}
                                 - Username: {username}
                                 - Password: {password}
                                 - Firstname: {firstname}
                                 - Lastname: {lastname}
-
+                                
                                 For security, please log in and change your password as soon as possible:
                                 https://yourwebsite.com/login
-
+                                
                                 If you have any questions or need support, please contact us at support@yourwebsite.com.
-
+                                
                                 Best regards,
                                 The YourWebsite Team
                                 """
+
                 Send.send_mail(subject, email, body, email, False)
-                AddAccounts.add(email, firstname, lastname, username, password)
+                u.firstname = firstname
+                u.lastname = lastname
+                u.username = username
+                u.email = email
+                db.session.commit()
                 return redirect(url_for('dashboard'))
-    return render_template('foodmart1/add_customer_from_dashboard.html')
+        return render_template('foodmart1/edit_customers.html')
 
 
-@app.route('/add_category', methods=["GET", "POST"])
-def add_category():
-    if request.method == "POST":
-        name = request.form['name']
-        desc = request.form['desc']
-        cat = Category(name=name, description=desc)
-        db.session.add(cat)
-        db.session.commit()
-        return redirect(url_for('admin_category'))
-    return render_template('foodmart1/add_category.html')
+    @app.route('/add_customers', methods=['POST', 'GET'])
+    def add_customer():
+        global mistakes
+        if request.method == 'POST':
+            session['cart-message'] = ''
+            print('making account')
+            mistakes = []
+            if request.method == 'POST':
+                firstname = request.form.get('firstname', '').strip()
+                lastname = request.form.get('lastname', '').strip()
+                email = request.form.get('email', '').strip()
+                username = request.form.get('username', '').strip()
+
+                if not is_real_email(email):
+                    mistakes.append("Email is Wrong")
+                else:
+                    password = generate_password()
+                    subject = f"Hello {firstname}"
+                    body = f"""
+                                    Hello {firstname} {lastname},
+    
+                                    Your account has been successfully created/updated by our administrator.
+    
+                                    Here are your login details:
+                                    - Email: {email}
+                                    - Username: {username}
+                                    - Password: {password}
+                                    - Firstname: {firstname}
+                                    - Lastname: {lastname}
+    
+                                    For security, please log in and change your password as soon as possible:
+                                    https://yourwebsite.com/login
+    
+                                    If you have any questions or need support, please contact us at support@yourwebsite.com.
+    
+                                    Best regards,
+                                    The YourWebsite Team
+                                    """
+                    Send.send_mail(subject, email, body, email, False)
+                    AddAccounts.add(email, firstname, lastname, username, password)
+                    return redirect(url_for('dashboard'))
+        return render_template('foodmart1/add_customer_from_dashboard.html')
 
 
-@app.route('/add_product', methods=["POST", "GET"])
-def add_product():
-    if request.method == "POST":
-        print('in proccess')
-        name = request.form['name']
-        desc = request.form['desc']
-        price = request.form['price']
-        stock = request.form['stock']
-        image = request.form['image']
-        category = request.form['category']
-        print('done variebles')
-
-        cat = Products(name=name, about=desc, price=int(price), stock=int(stock), image=image)
-        db.session.add(cat)
-        db.session.commit()
-        relation = CategoryAndProduct(productid=cat.id, categoryid=int(category))
-
-        db.session.add(relation)
-        db.session.commit()
-        print('done')
-        return redirect(url_for('admin_products'))
-    return render_template('foodmart1/add_product.html')
+    @app.route('/add_category', methods=["GET", "POST"])
+    def add_category():
+        if request.method == "POST":
+            name = request.form['name']
+            desc = request.form['desc']
+            cat = Category(name=name, description=desc)
+            db.session.add(cat)
+            db.session.commit()
+            return redirect(url_for('admin_category'))
+        return render_template('foodmart1/add_category.html')
 
 
-@app.route('/edit_category', methods=["POST", "GET"])
-def edit_category():
-    id = int(session['categoryid'])
-    # print(id,type(id))
-    if request.method == 'POST':
-        print('in proccess')
-        name = request.form['name']
-        desc = request.form['desc']
-        print(desc)
+    @app.route('/add_product', methods=["POST", "GET"])
+    def add_product():
+        if request.method == "POST":
+            print('in proccess')
+            name = request.form['name']
+            desc = request.form['desc']
+            price = request.form['price']
+            stock = request.form['stock']
+            image = request.form['image']
+            category = request.form['category']
+            print('done variebles')
+
+            cat = Products(name=name, about=desc, price=int(price), stock=int(stock), image=image)
+            db.session.add(cat)
+            db.session.commit()
+            relation = CategoryAndProduct(productid=cat.id, categoryid=int(category))
+
+            db.session.add(relation)
+            db.session.commit()
+            print('done')
+            return redirect(url_for('admin_products'))
+        return render_template('foodmart1/add_product.html')
+
+
+    @app.route('/edit_category', methods=["POST", "GET"])
+    def edit_category():
         id = int(session['categoryid'])
-        print('cat debugg start')
-        cat = Category.query.filter_by(id=int(id)).first()
-        print('cat debugg end')
-        if cat:
-            print('yooooo')
-            cat.name = name
-            cat.description = desc
-            db.session.commit()
-        else:
-            print("No product found with id", id)
-        print('done')
-        return redirect(url_for('admin_category'))
-    i = Category.query.filter_by(id=id).first()
-    return render_template('foodmart1/edit_category.html', info=i)
+        # print(id,type(id))
+        if request.method == 'POST':
+            print('in proccess')
+            name = request.form['name']
+            desc = request.form['desc']
+            print(desc)
+            id = int(session['categoryid'])
+            print('cat debugg start')
+            cat = Category.query.filter_by(id=int(id)).first()
+            print('cat debugg end')
+            if cat:
+                print('yooooo')
+                cat.name = name
+                cat.description = desc
+                db.session.commit()
+            else:
+                print("No product found with id", id)
+            print('done')
+            return redirect(url_for('admin_category'))
+        i = Category.query.filter_by(id=id).first()
+        return render_template('foodmart1/edit_category.html', info=i)
 
 
-@app.route('/edit_product', methods=['POST', 'GET'])
-def edit_product():
-    id = int(session['productid'])
-    print(id, type(id))
-    if request.method == 'POST':
-        print('in proccess')
-        name = request.form['name']
-        desc = request.form['desc']
-        price = request.form['price']
-        stock = request.form['stock']
-        image = request.form['image']
-        category = request.form['category']
-        print("Session contents:", dict(session))
-        try:
-            id = int(session['productid'])
-            print("Got id from session:", id)
-        except Exception as e:
-            print("Problem with session['categoryid']:", e)
-            return "No id found in session", 400
+    @app.route('/edit_product', methods=['POST', 'GET'])
+    def edit_product():
+        id = int(session['productid'])
+        print(id, type(id))
+        if request.method == 'POST':
+            print('in proccess')
+            name = request.form['name']
+            desc = request.form['desc']
+            price = request.form['price']
+            stock = request.form['stock']
+            image = request.form['image']
+            category = request.form['category']
+            print("Session contents:", dict(session))
+            try:
+                id = int(session['productid'])
+                print("Got id from session:", id)
+            except Exception as e:
+                print("Problem with session['categoryid']:", e)
+                return "No id found in session", 400
 
-        print('cat debugg start')
-        cat = Products.query.filter_by(id=int(id)).first()
-        print('cat debugg end')
-        if cat:
-            print('yooooo')
-            cat.name = name
-            cat.about = desc
-            cat.price = price
-            cat.stock = stock
-            cat.image = image
-            cat.category = category
-            db.session.commit()
-        else:
-            print("No product found with id", id)
-        print('done')
-        return redirect(url_for('admin_products'))
-    i = Products.query.filter_by(id=id).first()
-    return render_template('foodmart1/edit_product.html', info=i)
+            print('cat debugg start')
+            cat = Products.query.filter_by(id=int(id)).first()
+            print('cat debugg end')
+            if cat:
+                print('yooooo')
+                cat.name = name
+                cat.about = desc
+                cat.price = price
+                cat.stock = stock
+                cat.image = image
+                cat.category = category
+                db.session.commit()
+            else:
+                print("No product found with id", id)
+            print('done')
+            return redirect(url_for('admin_products'))
+        i = Products.query.filter_by(id=id).first()
+        return render_template('foodmart1/edit_product.html', info=i)
 
 
 @app.route('/cart', methods=['GET', 'POST'])
@@ -533,7 +534,7 @@ def home():
 
             amount = 0
             for i in cartitems:
-                print(i, i.amount)
+                # print(i, i.amount)
                 amount += int(i.amount)
             session['productamount'] = amount
         else:
@@ -546,10 +547,11 @@ def home():
         user = session['username']
     amount = str(session['productamount'])
     logged = session['logged']
-    print(logged, user)
+    # print(logged, user)
     message = ''
     if 'cart-message' in session:
         message = session['cart-message']
+    print('hi',os.getenv("STRIPE_SECRET_KEY"))
     return render_template('foodmart1/main2.html', name=websitename, username=user, logged=logged, productamount=amount,
                            message=message)
 
