@@ -43,19 +43,25 @@
 {% block customer_active %}active{% endblock %}
 {% block category_active %}nope{% endblock %}
 {% block content %}
+
     <div class="grid-products">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+    <select id="filterSelect" class="filter">
+      <option value="all">All</option>
+      <option value="much-amount">Amount above 20</option>
+    </select>
 {#        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
         {% for p in p %}
-            <div class="product-card" data-name="{{ p.email | lower }}">
-                <div class="product-name">{{ p.email }}</div>
-                <div>{{ p.firstname }},{{ p.lastname }}</div>
+            <div class="product-card" data-name="{{ p[0].email | lower }}" data-amount="{{ 'much-amount' if p[1] > 19 else 'low-amount' }}">
+                <div class="product-name">{{ p[0].email }}</div>
+                <div>{{ p[0].firstname }},{{ p[0].lastname }}</div>
                 <div class="product-actions">
                     <form method="POST" action="/admin_customers">
-                        <input type="hidden" name="id" value="{{ p.id }}">
+                        <input type="hidden" name="id" value="{{ p[0].id }}">
                         <button class="btn" type="submit" name="edit" value="confirm">✏️ Edit</button>
                     </form>
                     <form method="POST" action="/admin_customers">
-                        <input type="hidden" name="id" value="{{ p.id }}">
+                        <input type="hidden" name="id" value="{{ p[0].id }}">
                         <button class="btn" name="remove1" value="remove1">🗑️ Remove</button>
                     </form>
                 </div>

@@ -127,14 +127,13 @@ if True:
             else:
                 return redirect(url_for('add_product'))
         products = Products.query.all()
-        p = []
-        for i in products:
-            p.append(i)
-        cate = Category.query.all()
         c = []
-        for i in cate:
-            c.append(i)
-        return render_template('foodmart1/admin_products.html', product=p,cat=c)
+        # for i in products:
+        #     cate = CategoryAndProduct.query.filter_by(productid=int(i.id)).all()
+        #     for u in cate:
+        #         c.append(u)
+        category = Category.query.all()
+        return render_template('foodmart1/admin_products.html', product=products,cat=category)
 
 
     @app.route('/admin_categorys', methods=['GET', 'POST'])
@@ -205,8 +204,15 @@ if True:
         u = Users.query.all()
         for i in u:
             role = Roles.query.filter_by(id=int(i.roleid)).first()
+            k = 0
             if role.name == 'Customer':
-                users.append(i)
+                n = Carts.query.filter_by(user=int(i.id)).first()
+                rel = CartProducts.query.filter_by(cartid=int(n.id)).all()
+                for u in rel:
+
+                    k += int(u.amount)
+                print('ammount', k)
+                users.append([i,k])
         return render_template('foodmart1/admin_customers.html', p=users)
 
     @app.route('/edit_customer', methods=['POST', 'GET'])

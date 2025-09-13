@@ -9,7 +9,6 @@ class Products(db.Model):
     name = db.Column(db.String(200))
     # brand_id = db.Column(db.Integer,db.ForeignKey('brands.id'))
     about = db.Column(db.String(1000))
-    category =  db.Column(db.String(50))
     cart_products = db.relationship('CartProducts', back_populates="product")
 
 class SpecailProducts(db.Model):
