@@ -14,6 +14,7 @@ from default_permissions import DF_P, Add_Connection
 from models import Users, Roles
 from models.cart import Carts, CartProducts
 import stripe
+from models.orders import Orders
 from models.manytomany import CategoryAndProduct
 from models.category import Category
 from models.products import Products
@@ -23,6 +24,7 @@ import os
 import secrets
 import string
 
+load_dotenv()
 
 # Function to generate a secure random password
 def generate_password(length=12):
@@ -64,7 +66,8 @@ app.config.from_object(Config)
 app.secret_key = '123'
 db.init_app(app)
 migrate = Migrate(app, db)
-
+app.jinja_env.globals.update(zip=zip)
+app.jinja_env.filters['zip'] = zip
 
 @app.route('/install', methods=['GET', 'POST'])
 def install():
@@ -127,7 +130,11 @@ if True:
         p = []
         for i in products:
             p.append(i)
-        return render_template('foodmart1/admin_products.html', product=p)
+        cate = Category.query.all()
+        c = []
+        for i in cate:
+            c.append(i)
+        return render_template('foodmart1/admin_products.html', product=p,cat=c)
 
 
     @app.route('/admin_categorys', methods=['GET', 'POST'])
@@ -327,6 +334,13 @@ if True:
             db.session.add(relation)
             db.session.commit()
             print('done')
+            product_in_stripe = stripe.Product.create(name=name)
+            productid_in_stripe = product_in_stripe['id']
+            price_in_stripe = stripe.Price.create(
+                product=productid_in_stripe,
+                unit_amount=int(price),
+                currency="usd",
+            )
             return redirect(url_for('admin_products'))
         return render_template('foodmart1/add_product.html')
 
@@ -520,11 +534,37 @@ def add_to_cart():
             session['cart-message'] = 'Not logged in'
             return redirect(url_for(str(location)))
 
+@app.route('/admin_orders')
+def orders():
+    o = Orders.query.all()
+    p = Products.query.all()
+    Os = []
+    products = []
+    for i in o:
+        Os.append(i)
+        print(i)
+    return render_template('foodmart1/orders.html',o=Os)
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    # Provide the exact Price ID (for example, price_1234) of the product you want to sell
+                    'price': 'price_1S4o070M2bkbpgp4d61nDi23',
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url="http://127.0.0.1:5000" + '/success.html',
+            cancel_url="http://127.0.0.1:5000" + '/cancel.html',
+        )
+    except Exception as e:
+        return str(e)
 
+    return redirect(checkout_session.url, code=303)
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    # if 'cart-message' in session:
-    #     del session['cart-message']
     if 'logged' not in session:
         session['logged'] = False
     if 'productamount' not in session:
@@ -583,6 +623,7 @@ def products():
             pass
         else:
             products.append(i)
+
     return render_template('foodmart1/products.html', name=websitename, username=user, logged=logged,
                            productamount=amount, products=products, message=message)
 

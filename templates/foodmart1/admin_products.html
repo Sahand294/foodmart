@@ -25,6 +25,12 @@
     padding: 12px;
     text-align: center;
   }
+  .search-input{
+      height: 40px;
+  }
+  .filter{
+      height: 60px;
+  }
   .add-card {
     border: 2px dashed rgba(100,116,139,.35);
     font-weight: 700;
@@ -33,12 +39,27 @@
   }
 </style>
 {% endblock %}
-
+{% block dash_active %}nope{% endblock %}
+{% block order_active %}nope{% endblock %}
+{% block product_active %}active{% endblock %}
+{% block customer_active %}nope{% endblock %}
+{% block category_active %}nope{% endblock %}
 {% block content %}
+
 <div class="grid-products">
+<input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+<select id="filterSelect" class="filter">
+  <option value="all">All</option>
+  <option value="much-amount">Amount above 50</option>
+  <option value="much-price">Total Price above 100$</option>
+  {% for c in cat %}
+  <!-- value MUST be plain lowercased category -->
+  <option value="{{ c.name | lower}}">Category:{{ c.name}}</option>
+  {% endfor %}
+</select>
   {% for p in product %}
-  <div class="product-card">
-    <img src="{{ product.image_url }}" alt="{{ p.name }}">
+  <div class="product-card"  data-name="{{ p.name | lower }}" data-cat="{{ p.category | lower}}" data-amount="{{ 'much-amount' if p.stock > 50 else 'low-amount' }}" data-price="{{ 'much-price' if p.price > 100 else 'low-price' }}">
+{#    <img src="{{ product.image_url }}" alt="{{ p.name }}">#}
     <div class="product-name">{{ p.name }}</div>
     <div>${{ p.price }}</div>
     <div>stock:{{ p.stock }}</div>
@@ -60,3 +81,46 @@
 </div>
 {% endblock %}
 
+{% block js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('searchInput');
+  const filterSelect = document.getElementById('filterSelect');
+  const productCards = document.querySelectorAll('.product-card');
+
+  function filterProducts() {
+    const searchText = (searchInput?.value || '').trim().toLowerCase();
+    const filterValue = (filterSelect?.value || 'all').toLowerCase();
+
+    productCards.forEach(card => {
+      const name = (card.dataset.name || '').toLowerCase();
+      const amountStatus = (card.dataset.amount || '').toLowerCase();
+      const priceStatus = (card.dataset.price || '').toLowerCase();
+      const cat = (card.dataset.cat || '').toLowerCase();
+
+      const matchesSearch = name.includes(searchText);
+
+      let matchesFilter = false;
+      if (filterValue === 'all') {
+        matchesFilter = true;
+      } else if (filterValue === 'much-amount') {
+        matchesFilter = (amountStatus === 'much-amount');
+      } else if (filterValue === 'much-price') {
+        matchesFilter = (priceStatus === 'much-price');
+      } else {
+        // treat anything else as category
+        matchesFilter = (cat === filterValue);
+      }
+
+      card.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+    });
+  }
+
+  filterSelect?.addEventListener('change', filterProducts);
+  searchInput?.addEventListener('input', filterProducts);
+  filterProducts();
+});
+</script>
+
+
+{% endblock %}

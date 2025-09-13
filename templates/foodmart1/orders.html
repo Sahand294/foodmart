@@ -3,7 +3,7 @@
 {% block title %}Products - Admin{% endblock %}
 
 {% block css %}
-   <style>
+<style>
   .grid-products {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -38,33 +38,30 @@
 </style>
 {% endblock %}
 {% block dash_active %}nope{% endblock %}
-{% block order_active %}nope{% endblock %}
+{% block order_active %}active{% endblock %}
 {% block product_active %}nope{% endblock %}
-{% block customer_active %}active{% endblock %}
+{% block customer_active %}nope{% endblock %}
 {% block category_active %}nope{% endblock %}
 {% block content %}
-    <div class="grid-products">
-{#        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
-        {% for p in p %}
-            <div class="product-card" data-name="{{ p.email | lower }}">
-                <div class="product-name">{{ p.email }}</div>
-                <div>{{ p.firstname }},{{ p.lastname }}</div>
-                <div class="product-actions">
-                    <form method="POST" action="/admin_customers">
-                        <input type="hidden" name="id" value="{{ p.id }}">
-                        <button class="btn" type="submit" name="edit" value="confirm">✏️ Edit</button>
-                    </form>
-                    <form method="POST" action="/admin_customers">
-                        <input type="hidden" name="id" value="{{ p.id }}">
-                        <button class="btn" name="remove1" value="remove1">🗑️ Remove</button>
-                    </form>
-                </div>
-            </div>
-        {% endfor %}
-        <a class="add-card" href="http://127.0.0.1:5000/add_customers">+ Add Customer</a>
-    </div>
-{% endblock %}
+{#<input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
+<div class="grid-products">
+<input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+<select id="filterSelect" class="filter">
+  <option value="all">All</option>
+  <option value="much-amount">Amount above 10</option>
+  <option value="much-price">Total Price above 1000$</option>
+</select>
 
+{% for o in o %}
+<div class="product-card" data-name="{{ o.cart | lower }}" data-amount="{{ 'much-amount' if o.amount > 9 else 'low-amount' }}" data-price="{{ 'much-price' if o.totall_price > 999 else 'low-price' }}">
+
+    <div class="product-name">cart number:{{ o.cart }}</div>
+    <div>${{ o.totall_price }}</div>
+    <div>amount:{{ o.amount }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
 {% block js %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {

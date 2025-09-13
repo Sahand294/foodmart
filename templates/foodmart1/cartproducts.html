@@ -66,8 +66,9 @@
                     <strong>TOTAL PRICE</strong>
                     <strong id="total">{{ totall_price }}$</strong>
                 </div>
-
-                <button class="btn-checkout">CHECKOUT</button>
+                <form action="/create-checkout-session" method="POST">
+                    <button class="btn-checkout" type="submit">CHECKOUT</button>
+                </form>
             </aside>
         </div>
 
