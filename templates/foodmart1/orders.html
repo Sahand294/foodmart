@@ -2,41 +2,6 @@
 
 {% block title %}Products - Admin{% endblock %}
 
-{% block css %}
-<style>
-  .grid-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-  }
-  .product-card, .add-card {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--panel);
-    border: 1px solid rgba(100,116,139,.25);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 12px;
-    text-align: center;
-  }
-  .search-input{
-      height: 40px;
-  }
-  .filter{
-      height: 60px;
-  }
-  .add-card {
-    border: 2px dashed rgba(100,116,139,.35);
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-  }
-</style>
-{% endblock %}
 {% block dash_active %}nope{% endblock %}
 {% block order_active %}active{% endblock %}
 {% block product_active %}nope{% endblock %}
@@ -44,66 +9,96 @@
 {% block category_active %}nope{% endblock %}
 {% block content %}
 {#<input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
-<div class="grid-products">
-<input type="text" id="searchInput" class="search-input" placeholder="Search products...">
-<select id="filterSelect" class="filter">
-  <option value="all">All</option>
-  <option value="much-amount">Amount above 10</option>
-  <option value="much-price">Total Price above 1000$</option>
-</select>
+<div class="grid-products-wrapper">
+  <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
+  <select id="filterSelect" class="filter">
+    <option value="all">All</option>
+    <option value="much-amount">Amount above 10</option>
+    <option value="much-price">Total Price above 1000$</option>
+  </select>
 
-{% for o in o %}
-<div class="product-card" data-name="{{ o.cart | lower }}" data-amount="{{ 'much-amount' if o.amount > 9 else 'low-amount' }}" data-price="{{ 'much-price' if o.totall_price > 999 else 'low-price' }}">
+  <div id="cardContainer" class="grid-products">
+    {% for o in o %}
+    <div class="product-card"
+         data-name="{{ o.cart | lower }}"
+         data-amount="{{ 'much-amount' if o.amount > 9 else 'low-amount' }}"
+         data-price="{{ 'much-price' if o.totall_price > 999 else 'low-price' }}">
 
-    <div class="product-name">cart number:{{ o.cart }}</div>
-    <div>${{ o.totall_price }}</div>
-    <div>amount:{{ o.amount }}</div>
+        <div class="product-name">cart number:{{ o.cart }}</div>
+        <div>${{ o.totall_price }}</div>
+        <div>amount:{{ o.amount }}</div>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
+
+  <div id="paginationControls"></div>
 </div>
 {% endblock %}
 {% block js %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const searchInput = document.getElementById('searchInput'); // new
+  const itemsPerPage = 3; // number of products per page
+  const searchInput = document.getElementById('searchInput');
   const filterSelect = document.getElementById('filterSelect');
-  const productCards = document.querySelectorAll('.product-card');
+  const cardContainer = document.getElementById('cardContainer');
+  const paginationControls = document.getElementById('paginationControls');
+  const allCards = Array.from(cardContainer.querySelectorAll('.product-card'));
 
-  function filterProducts() {
-    const searchText = (searchInput?.value || '').trim().toLowerCase(); // new
-    const filterValue = filterSelect.value;
+  let filteredCards = allCards;
+  let currentPage = 1;
 
-    productCards.forEach(card => {
-      const name = (card.dataset.name || '').toLowerCase();  // new
-      const amountStatus = card.dataset.amount; // "much-amount" or "low-amount"
-      const priceStatus = card.dataset.price;   // "much-price" or "low-price"
+  function renderCards() {
+    allCards.forEach(c => c.style.display = 'none');
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    filteredCards.slice(start, end).forEach(c => c.style.display = '');
+    renderPagination();
+  }
 
-      // search matches name?
-      const matchesSearch = name.includes(searchText);
+  function renderPagination() {
+    paginationControls.innerHTML = '';
+    const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+    if (totalPages <= 1) return;
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = (i === currentPage) ? 'active-page' : '';
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        renderCards();
+      });
+      paginationControls.appendChild(btn);
+    }
+  }
 
-      // filter matches?
-      let matchesFilter = false;
-      if (filterValue === 'all') {
-        matchesFilter = true;
-      } else if (filterValue === 'much-amount') {
-        matchesFilter = (amountStatus === 'much-amount');
-      } else if (filterValue === 'much-price') {
-        matchesFilter = (priceStatus === 'much-price');
+  function filterCards() {
+    const searchText = (searchInput.value || '').trim().toLowerCase();
+    const filterVal = filterSelect.value;
+
+    filteredCards = allCards.filter(card => {
+      const name = (card.dataset.name || '').toLowerCase();
+      const amountStatus = card.dataset.amount;
+      const priceStatus = card.dataset.price;
+
+      let matches = name.includes(searchText);
+
+      if (filterVal !== 'all') {
+        matches = matches && (
+          amountStatus === filterVal ||
+          priceStatus === filterVal
+        );
       }
-
-      // show if both match
-      card.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+      return matches;
     });
+
+    currentPage = 1;
+    renderCards();
   }
 
-  filterSelect.addEventListener('change', filterProducts);
-  if (searchInput) {
-    searchInput.addEventListener('input', filterProducts); // new
-  }
+  searchInput.addEventListener('input', filterCards);
+  filterSelect.addEventListener('change', filterCards);
 
-  // Initial run
-  filterProducts();
+  renderCards(); // initial render
 });
 </script>
-
 {% endblock %}

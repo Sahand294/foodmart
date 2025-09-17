@@ -7,9 +7,10 @@ class Products(db.Model):
     stock = db.Column(db.Integer)
     price = db.Column(db.Integer)
     name = db.Column(db.String(200))
-    # brand_id = db.Column(db.Integer,db.ForeignKey('brands.id'))
     about = db.Column(db.String(1000))
     cart_products = db.relationship('CartProducts', back_populates="product")
+    categories = db.relationship('Category', secondary='category_and_product', back_populates='products')
+
 
 class SpecailProducts(db.Model):
     __tablename__ = 'Specailproducts'

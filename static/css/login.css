@@ -61,3 +61,54 @@ button:hover {
     color: #007bff;
     text-decoration: none;
 }
+
+
+
+.circle-options {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+
+.circle-option {
+display: flex;
+align-items: center;
+cursor: pointer;
+position: relative;
+font-family: sans-serif;
+font-size: 14px;
+}
+
+
+.circle-option input[type="checkbox"] {
+display: none; /* hide the real checkbox */
+}
+
+
+.custom-circle {
+width: 18px;
+height: 18px;
+border: 2px solid #007BFF;
+border-radius: 50%; /* makes it a circle */
+margin-right: 8px;
+display: inline-block;
+position: relative;
+}
+
+
+.circle-option input[type="checkbox"]:checked + .custom-circle {
+background-color: #007BFF; /* fill blue when checked */
+}
+
+
+.circle-option input[type="checkbox"]:checked + .custom-circle::after {
+content: "";
+position: absolute;
+top: 4px;
+left: 4px;
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: white;
+}

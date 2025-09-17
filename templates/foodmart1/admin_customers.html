@@ -2,41 +2,7 @@
 
 {% block title %}Products - Admin{% endblock %}
 
-{% block css %}
-   <style>
-  .grid-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-  }
-  .product-card, .add-card {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: var(--panel);
-    border: 1px solid rgba(100,116,139,.25);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 12px;
-    text-align: center;
-  }
-  .search-input{
-      height: 40px;
-  }
-  .filter{
-      height: 60px;
-  }
-  .add-card {
-    border: 2px dashed rgba(100,116,139,.35);
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-  }
-</style>
-{% endblock %}
+
 {% block dash_active %}nope{% endblock %}
 {% block order_active %}nope{% endblock %}
 {% block product_active %}nope{% endblock %}
