@@ -32,7 +32,7 @@ def generate_password(length=12):
     return ''.join(secrets.choice(chars) for _ in range(length))
 
 
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = "sk_test_51S9OlcDbgzKCvypomEvrVhNMuKwDGOrLguD75RpC64dQJXeyTP2MYksXBKlsa68Q8OENB9ndns1GsEBs982nyn4V0058oqhGNg"
 
 
 
@@ -626,14 +626,26 @@ def orders():
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
+        cart = Carts.query.filter_by(user=int(session['id'])).first()
+        rel = CartProducts.query.filter_by(cartid=cart.id).all()
+        products = []
+        print(cart.id)
+        print(rel)
+        for i in rel:
+            print(i)
+            p = Products.query.filter_by(id=int(i.productid)).first()
+            products.append(p)
+            print(p)
+        print(products)
         checkout_session = stripe.checkout.Session.create(
             line_items=[
                 {
-                    # Provide the exact Price ID (for example, price_1234) of the product you want to sell
-                    'price': 'price_1S4o070M2bkbpgp4d61nDi23',
-                    'quantity': 1,
-                },
-            ],
+                    'price': price_id.product_price_stripe_id,
+                    'quantity': int(qty.amount)
+                }
+                for price_id, qty in zip(products, rel)
+            ]
+            ,
             mode='payment',
             success_url="http://127.0.0.1:5000" + '/success.html',
             cancel_url="http://127.0.0.1:5000" + '/cancel.html',

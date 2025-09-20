@@ -10,6 +10,8 @@ class Products(db.Model):
     about = db.Column(db.String(1000))
     cart_products = db.relationship('CartProducts', back_populates="product")
     categories = db.relationship('Category', secondary='category_and_product', back_populates='products')
+    product_stripe_id = db.Column(db.String(200))
+    product_price_stripe_id = db.Column(db.String(200))
 
 
 class SpecailProducts(db.Model):

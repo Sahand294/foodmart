@@ -471,156 +471,276 @@ footer {
 /* ============ Products Grid Page ============ */
 
 /* Wrapper grid for search/filter + products */
-.grid-products {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: var(--panel);
-  padding: 20px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
+/*.grid-products {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  gap: 16px;*/
+/*  background: var(--panel);*/
+/*  padding: 20px;*/
+/*  border-radius: var(--radius);*/
+/*  box-shadow: var(--shadow);*/
+/*}*/
 
-/* Search input */
-.search-input {
-  width: 100%;
-  max-width: 420px;
-  padding: 10px 14px;
-  border: 1px solid rgba(100, 116, 139, .25);
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--text);
-  outline: none;
-  transition: border .2s, background .2s;
-}
-.search-input:focus {
-  border-color: var(--brand);
-  background: var(--panel);
-}
+/*!* Search input *!*/
+/*.search-input {*/
+/*  width: 100%;*/
+/*  max-width: 420px;*/
+/*  padding: 10px 14px;*/
+/*  border: 1px solid rgba(100, 116, 139, .25);*/
+/*  border-radius: 999px;*/
+/*  background: var(--accent);*/
+/*  color: var(--text);*/
+/*  outline: none;*/
+/*  transition: border .2s, background .2s;*/
+/*}*/
+/*.search-input:focus {*/
+/*  border-color: var(--brand);*/
+/*  background: var(--panel);*/
+/*}*/
 
-/* Filter dropdown */
-.filter {
-  width: 200px;
-  padding: 10px 14px;
-  border: 1px solid rgba(100, 116, 139, .25);
-  border-radius: 999px;
-  background: var(--accent);
-  color: var(--text);
-  outline: none;
-  transition: border .2s, background .2s;
-}
-.filter:focus {
-  border-color: var(--brand);
-  background: var(--panel);
-}
+/*!* Filter dropdown *!*/
+/*.filter {*/
+/*  width: 200px;*/
+/*  padding: 10px 14px;*/
+/*  border: 1px solid rgba(100, 116, 139, .25);*/
+/*  border-radius: 999px;*/
+/*  background: var(--accent);*/
+/*  color: var(--text);*/
+/*  outline: none;*/
+/*  transition: border .2s, background .2s;*/
+/*}*/
+/*.filter:focus {*/
+/*  border-color: var(--brand);*/
+/*  background: var(--panel);*/
+/*}*/
 
-/* Product cards grid */
+/*!* Product cards grid *!*/
+/*#productContainer {*/
+/*  display: grid;*/
+/*  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));*/
+/*  gap: 16px;*/
+/*}*/
+
+/*!* Individual product card *!*/
+/*.product-card {*/
+/*  background: var(--panel);*/
+/*  border: 1px solid rgba(100, 116, 139, .15);*/
+/*  border-radius: var(--radius);*/
+/*  padding: 16px;*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  gap: 8px;*/
+/*  box-shadow: var(--shadow);*/
+/*  transition: transform .15s ease, box-shadow .15s ease;*/
+/*}*/
+/*.product-card:hover {*/
+/*  transform: translateY(-2px);*/
+/*  box-shadow: 0 10px 25px rgba(0,0,0,.3);*/
+/*}*/
+
+/*!* Product name and price *!*/
+/*.product-name {*/
+/*  font-size: 16px;*/
+/*  font-weight: 700;*/
+/*  color: var(--text);*/
+/*}*/
+
+/*!* Actions inside card *!*/
+/*.product-actions {*/
+/*  display: flex;*/
+/*  justify-content: flex-end;*/
+/*  gap: 8px;*/
+/*  margin-top: auto;*/
+/*}*/
+
+/*.product-actions .btn {*/
+/*  font-size: 13px;*/
+/*  padding: 6px 10px;*/
+/*  border-radius: 8px;*/
+/*  background: var(--accent);*/
+/*  border: 1px solid rgba(100, 116, 139, .25);*/
+/*  cursor: pointer;*/
+/*  color: var(--text);*/
+/*  transition: background .2s, transform .15s;*/
+/*}*/
+/*.product-actions .btn:hover {*/
+/*  background: var(--brand);*/
+/*  color: white;*/
+/*  transform: scale(1.05);*/
+/*}*/
+
+/*!* Add product button *!*/
+/*.add-card {*/
+/*  display: inline-block;*/
+/*  margin-top: 16px;*/
+/*  padding: 10px 16px;*/
+/*  border-radius: 999px;*/
+/*  border: 1px solid rgba(100, 116, 139, .25);*/
+/*  background: linear-gradient(135deg, var(--brand), var(--brand-2));*/
+/*  color: #fff;*/
+/*  font-weight: 700;*/
+/*  text-align: center;*/
+/*  cursor: pointer;*/
+/*  transition: opacity .2s;*/
+/*}*/
+/*.add-card:hover {*/
+/*  opacity: .9;*/
+/*}*/
+
+/*!* Pagination controls *!*/
+/*#paginationControls {*/
+/*  display: flex;*/
+/*  justify-content: center;*/
+/*  gap: 6px;*/
+/*  margin-top: 10px;*/
+/*}*/
+/*#paginationControls button {*/
+/*  padding: 6px 12px;*/
+/*  border: 1px solid rgba(100, 116, 139, .25);*/
+/*  border-radius: 6px;*/
+/*  background: var(--accent);*/
+/*  color: var(--text);*/
+/*  cursor: pointer;*/
+/*  transition: background .2s, transform .15s;*/
+/*}*/
+/*#paginationControls button:hover {*/
+/*  background: var(--brand);*/
+/*  color: white;*/
+/*  transform: scale(1.05);*/
+/*}*/
+/*#paginationControls .active-page,*/
+/*#paginationControls button.active-page {*/
+/*  background: var(--brand);*/
+/*  color: white;*/
+/*  border-color: var(--brand);*/
+/*}*/
+
+/*!* Badges inside product card *!*/
+/*.badge.bg-secondary {*/
+/*  background: rgba(100,116,139,.2);*/
+/*  color: var(--muted);*/
+/*  font-size: 11px;*/
+/*  padding: 3px 6px;*/
+/*  border-radius: 999px;*/
+/*  display: inline-block;*/
+/*}*/
+/* === Product grid styled like a pgAdmin table === */
+
+/* Container behaves like a scrollable table */
 #productContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-/* Individual product card */
-.product-card {
-  background: var(--panel);
-  border: 1px solid rgba(100, 116, 139, .15);
+  border: 1px solid rgba(100, 116, 139, .25);
   border-radius: var(--radius);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: var(--shadow);
-  transition: transform .15s ease, box-shadow .15s ease;
-}
-.product-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0,0,0,.3);
+  max-height: 600px;       /* adjust as needed */
+  overflow-y: auto;
 }
 
-/* Product name and price */
-.product-name {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
+/* Optional column header (uses ::before pseudo-element) */
+#productContainer::before {
+  content: "Categories | Name | Price | Stock | Actions";
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr;
+  background: var(--panel);
+  border-bottom: 1px solid rgba(100,116,139,.25);
+  padding: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
 }
 
-/* Actions inside card */
-.product-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: auto;
+/* Each product-card acts as a row */
+.product-card {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr 1fr; /* match header layout */
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid rgba(100,116,139,.25);
+  background: var(--bg);
+  transition: background .15s ease;
 }
 
-.product-actions .btn {
-  font-size: 13px;
-  padding: 6px 10px;
-  border-radius: 8px;
+/* Alternating row color */
+.product-card:nth-child(even) {
   background: var(--accent);
-  border: 1px solid rgba(100, 116, 139, .25);
-  cursor: pointer;
-  color: var(--text);
-  transition: background .2s, transform .15s;
-}
-.product-actions .btn:hover {
-  background: var(--brand);
-  color: white;
-  transform: scale(1.05);
 }
 
-/* Add product button */
-.add-card {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 10px 16px;
+/* Hover highlight like pgAdmin */
+.product-card:hover {
+  background: rgba(110, 168, 254, .08);
+}
+
+/* Cells */
+.product-card > div {
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+/* Actions cell */
+.product-card .product-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+/* Keep existing badges and buttons consistent */
+.product-card .badge {
+  background: var(--accent);
   border-radius: 999px;
-  border: 1px solid rgba(100, 116, 139, .25);
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  color: #fff;
-  font-weight: 700;
-  text-align: center;
-  cursor: pointer;
-  transition: opacity .2s;
-}
-.add-card:hover {
-  opacity: .9;
+  font-size: 12px;
+  padding: 2px 6px;
 }
 
-/* Pagination controls */
+.product-card .btn {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* Pagination controls styled like small buttons */
 #paginationControls {
   display: flex;
-  justify-content: center;
   gap: 6px;
-  margin-top: 10px;
-}
-#paginationControls button {
-  padding: 6px 12px;
-  border: 1px solid rgba(100, 116, 139, .25);
-  border-radius: 6px;
-  background: var(--accent);
-  color: var(--text);
-  cursor: pointer;
-  transition: background .2s, transform .15s;
-}
-#paginationControls button:hover {
-  background: var(--brand);
-  color: white;
-  transform: scale(1.05);
-}
-#paginationControls .active-page,
-#paginationControls button.active-page {
-  background: var(--brand);
-  color: white;
-  border-color: var(--brand);
+  padding: 8px;
+  justify-content: center;
 }
 
-/* Badges inside product card */
-.badge.bg-secondary {
-  background: rgba(100,116,139,.2);
-  color: var(--muted);
-  font-size: 11px;
-  padding: 3px 6px;
-  border-radius: 999px;
-  display: inline-block;
+#paginationControls button {
+  padding: 4px 8px;
+  border: 1px solid rgba(100,116,139,.25);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#paginationControls button.active-page,
+#paginationControls button:hover {
+  background: var(--accent);
+}
+/* Restyle the Add Product button */
+.add-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  margin: 12px auto;              /* centers it */
+  border: none;
+  border-radius: 999px;           /* pill shape */
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: background .2s ease, transform .1s ease;
+}
+
+.add-card:hover {
+  background: linear-gradient(135deg, var(--brand-2), var(--brand));
+  transform: translateY(-1px);
+}
+
+.add-card:active {
+  transform: translateY(0);
 }

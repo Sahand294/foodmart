@@ -24,9 +24,11 @@
          data-amount="{{ 'much-amount' if o.amount > 9 else 'low-amount' }}"
          data-price="{{ 'much-price' if o.totall_price > 999 else 'low-price' }}">
 
-        <div class="product-name">cart number:{{ o.cart }}</div>
+        <div class="product-name">{{ o.users_email }}</div>
         <div>${{ o.totall_price }}</div>
         <div>amount:{{ o.amount }}</div>
+        <div>payment method:{{ o.payment_method }}</div>
+        <div>purchase date:{{ o.purchase_date }}</div>
     </div>
     {% endfor %}
   </div>

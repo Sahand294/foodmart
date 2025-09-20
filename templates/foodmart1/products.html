@@ -16,7 +16,7 @@
                 {% for i in products %}
                 <div class="product-card">
                     <div class="product-image">
-                        <i class="{{ i.image }}"></i>
+                        <img src="static/images/{{ i.image }}" alt="{{ i.name }}">
                     </div>
                     <div class="product-info">
                         <h3 class="product-title">{{ i.name }}</h3>

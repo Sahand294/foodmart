@@ -12,10 +12,11 @@ class Carts(db.Model):
     users = db.relationship('Users', back_populates='cart', lazy=True)
     cart_products = db.relationship('CartProducts', back_populates="cart")
 class CartProducts(db.Model):
-    __tablename__ = 'cart_products'
+    __tablename__ = 'cart_item'
     id = db.Column(db.Integer,primary_key=True,autoincrement=True)
     cartid = db.Column(db.Integer,db.ForeignKey('carts.id'))
     productid = db.Column(db.Integer,db.ForeignKey('products.id'))
     amount = db.Column(db.Integer)
+    price = db.Column(db.Integer)
     cart = db.relationship("Carts", back_populates="cart_products")
     product = db.relationship("Products", back_populates="cart_products")
