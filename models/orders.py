@@ -9,6 +9,11 @@ class Orders(db.Model):
     status = db.Column(db.String(50))
     payment_method = db.Column(db.String(50))
 
+    items = db.relationship(
+        'Order_items',
+        backref='order',
+        cascade='all, delete-orphan'
+    )
 
 class Order_items(db.Model):
     id = db.Column(db.Integer,primary_key=True)
