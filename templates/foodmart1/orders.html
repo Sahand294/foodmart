@@ -8,99 +8,105 @@
 {% block customer_active %}nope{% endblock %}
 {% block category_active %}nope{% endblock %}
 {% block content %}
-{#<input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
-<div class="grid-products-wrapper">
-  <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
-  <select id="filterSelect" class="filter">
-    <option value="all">All</option>
-    <option value="much-amount">Amount above 10</option>
-    <option value="much-price">Total Price above 1000$</option>
-  </select>
+    {#<input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
+    <div class="grid-products-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
+        <select id="filterSelect" class="filter">
+            <option value="all">All</option>
+            <option value="much-amount">Amount above 10</option>
+            <option value="much-price">Total Price above 1000$</option>
+        </select>
 
-  <div id="cardContainer" class="grid-products">
-    {% for o in o %}
-    <div class="product-card"
-         data-name="{{ o.cart | lower }}"
-         data-amount="{{ 'much-amount' if o.amount > 9 else 'low-amount' }}"
-         data-price="{{ 'much-price' if o.totall_price > 999 else 'low-price' }}">
+        <div id="cardContainer" class="grid-products">
+            {% for o in o %}
+                <div class="product-card"
+                     data-name="{{ o.cart | lower }}"
+                     data-amount="{{ 'much-amount' if o.amount > 9 else 'low-amount' }}"
+                     data-price="{{ 'much-price' if o.totall_price > 999 else 'low-price' }}">
 
-        <div class="product-name">{{ o.users_email }}</div>
-        <div>${{ o.totall_price }}</div>
-        <div>amount:{{ o.amount }}</div>
-        <div>payment method:{{ o.payment_method }}</div>
-        <div>purchase date:{{ o.purchase_date }}</div>
+                    <div class="product-name">{{ o.users_email }}</div>
+                    <div>${{ o.totall_price }}</div>
+                    <div>amount:{{ o.amount }}</div>
+                    <div>payment method:{{ o.payment_method }}</div>
+                    <div>purchase date:{{ o.purchase_date }}</div>
+                    <div class="product-actions">
+                        <form method="POST" action="/admin_orders">
+                            <input type="hidden" name="id" value="{{ o.id }}">
+                            <button class="btn" type="submit" name="edit" value="confirm">View Order</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="paginationControls"></div>
     </div>
-    {% endfor %}
-  </div>
-
-  <div id="paginationControls"></div>
-</div>
 {% endblock %}
 {% block js %}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const itemsPerPage = 3; // number of products per page
-  const searchInput = document.getElementById('searchInput');
-  const filterSelect = document.getElementById('filterSelect');
-  const cardContainer = document.getElementById('cardContainer');
-  const paginationControls = document.getElementById('paginationControls');
-  const allCards = Array.from(cardContainer.querySelectorAll('.product-card'));
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const itemsPerPage = 3; // number of products per page
+            const searchInput = document.getElementById('searchInput');
+            const filterSelect = document.getElementById('filterSelect');
+            const cardContainer = document.getElementById('cardContainer');
+            const paginationControls = document.getElementById('paginationControls');
+            const allCards = Array.from(cardContainer.querySelectorAll('.product-card'));
 
-  let filteredCards = allCards;
-  let currentPage = 1;
+            let filteredCards = allCards;
+            let currentPage = 1;
 
-  function renderCards() {
-    allCards.forEach(c => c.style.display = 'none');
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    filteredCards.slice(start, end).forEach(c => c.style.display = '');
-    renderPagination();
-  }
+            function renderCards() {
+                allCards.forEach(c => c.style.display = 'none');
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                filteredCards.slice(start, end).forEach(c => c.style.display = '');
+                renderPagination();
+            }
 
-  function renderPagination() {
-    paginationControls.innerHTML = '';
-    const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
-    if (totalPages <= 1) return;
-    for (let i = 1; i <= totalPages; i++) {
-      const btn = document.createElement('button');
-      btn.textContent = i;
-      btn.className = (i === currentPage) ? 'active-page' : '';
-      btn.addEventListener('click', () => {
-        currentPage = i;
-        renderCards();
-      });
-      paginationControls.appendChild(btn);
-    }
-  }
+            function renderPagination() {
+                paginationControls.innerHTML = '';
+                const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+                if (totalPages <= 1) return;
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = (i === currentPage) ? 'active-page' : '';
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderCards();
+                    });
+                    paginationControls.appendChild(btn);
+                }
+            }
 
-  function filterCards() {
-    const searchText = (searchInput.value || '').trim().toLowerCase();
-    const filterVal = filterSelect.value;
+            function filterCards() {
+                const searchText = (searchInput.value || '').trim().toLowerCase();
+                const filterVal = filterSelect.value;
 
-    filteredCards = allCards.filter(card => {
-      const name = (card.dataset.name || '').toLowerCase();
-      const amountStatus = card.dataset.amount;
-      const priceStatus = card.dataset.price;
+                filteredCards = allCards.filter(card => {
+                    const name = (card.dataset.name || '').toLowerCase();
+                    const amountStatus = card.dataset.amount;
+                    const priceStatus = card.dataset.price;
 
-      let matches = name.includes(searchText);
+                    let matches = name.includes(searchText);
 
-      if (filterVal !== 'all') {
-        matches = matches && (
-          amountStatus === filterVal ||
-          priceStatus === filterVal
-        );
-      }
-      return matches;
-    });
+                    if (filterVal !== 'all') {
+                        matches = matches && (
+                            amountStatus === filterVal ||
+                            priceStatus === filterVal
+                        );
+                    }
+                    return matches;
+                });
 
-    currentPage = 1;
-    renderCards();
-  }
+                currentPage = 1;
+                renderCards();
+            }
 
-  searchInput.addEventListener('input', filterCards);
-  filterSelect.addEventListener('change', filterCards);
+            searchInput.addEventListener('input', filterCards);
+            filterSelect.addEventListener('change', filterCards);
 
-  renderCards(); // initial render
-});
-</script>
+            renderCards(); // initial render
+        });
+    </script>
 {% endblock %}

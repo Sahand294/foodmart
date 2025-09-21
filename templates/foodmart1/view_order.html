@@ -2,14 +2,14 @@
 <div class="grid-products-wrapper">
 
   <div id="cardContainer" class="grid-products">
-    {% for o in o %}
+    {% for item in rel%}
     <div class="product-card">
 
-        <div class="product-name"> cart id:{{ o.cart_id }}</div>
-        <div>order id :{{ o.order_id }}</div>
-        <div>amount:{{ o.amount }}</div>
-        <div>product name:{{ p.name }}</div>
-        <div>totall price:{{ o.price }}</div>
+        <div class="product-name"> cart id:{{ item.Order_items.cart_id }}</div>
+        <div>order id :{{ item.Order_items.order_id }}</div>
+        <div>amount:{{ item.Orders.amount }}</div>
+        <div>product name:{{ item.Products.name }}</div>
+        <div>totall price:{{ item.Order_items.price }}</div>
     </div>
     {% endfor %}
   </div>

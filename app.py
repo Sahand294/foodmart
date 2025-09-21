@@ -281,13 +281,13 @@ if True:
         # Updated by JavadSarlak------------
         order_with_details = Orders.query\
             .join(Order_items, Orders.items)\
-            .join(Product, Order_items.product_id == Product.id)\
+            .join(Products, Order_items.product_id == Products.id)\
             .filter(Orders.id == order_id)\
             .add_entity(Order_items)\
-            .add_entity(Product)\
+            .add_entity(Products)\
             .all()
-        
-        return render_template('view_order.html',o=order_items)
+        print(order_with_details)
+        return render_template('foodmart1/view_order.html',rel=order_items)
     @app.route('/edit_customer', methods=['POST', 'GET'])
     def edit_customer():
         if session['role'] == 'Admin' or session['role'] == 'Owner':
@@ -668,8 +668,11 @@ def add_to_cart():
             session['cart-message'] = 'Not logged in'
             return redirect(url_for(str(location)))
 
-@app.route('/admin_orders')
+@app.route('/admin_orders',methods=['POST','GET'])
 def orders():
+    if request.method == 'POST':
+        session['order_id'] = request.form.get('id')
+        return redirect(url_for('view_order'))
     o = Orders.query.all()
     p = Products.query.all()
     Os = []
