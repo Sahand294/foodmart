@@ -12,17 +12,17 @@
     <form action="/edit_product" method="POST">
         {% if  info %}
             <input type="hidden" id="id" name="id" value="{{ info.id }}" required/>
-            <label for="image">image:{{ info.image }}</label>
-            <input type="text" id="image" name="image" placeholder="{{ info.image }}" required/>
-            <label for="stock">stock:{{ info.stock }}</label>
+            <label for="image">image:</label>
+            <input type="file" id="image" name="image" placeholder="{{ info.image }}" required/>
+            <label for="stock">stock:</label>
             <input type="text" id="stock" name="stock" placeholder="{{ info.stock }}" required/>
-            <label for="name">name:{{ info.name }}</label>
+            <label for="name">name:</label>
             <input type="text" id="name" name="name" placeholder="{{ info.name }}" required/>
-            <label for="price">price:{{ info.price }}</label>
+            <label for="price">price:</label>
             <input type="text" id="price" name="price" placeholder="{{ info.price }}" required/>
-            <label for="desc">description:{{ info.about }}</label>
+            <label for="desc">description:</label>
             <input type="text" id="desc" name="desc" placeholder="{{ info.about }}" required/>
-            <label for="category">category:{{ info.category }}</label>
+            <label for="category">category:</label>
 
 <label>Choose categories:</label>
 <div class="circle-options">

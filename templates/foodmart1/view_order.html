@@ -1,0 +1,19 @@
+{% block content %}
+<div class="grid-products-wrapper">
+
+  <div id="cardContainer" class="grid-products">
+    {% for o in o %}
+    <div class="product-card">
+
+        <div class="product-name"> cart id:{{ o.cart_id }}</div>
+        <div>order id :{{ o.order_id }}</div>
+        <div>amount:{{ o.amount }}</div>
+        <div>product name:{{ p.name }}</div>
+        <div>totall price:{{ o.price }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="paginationControls"></div>
+</div>
+{% endblock %}

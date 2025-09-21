@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from config import Config
 from sending_emails import Send
 import re
+from models.orders import Orders,Order_items
 import dns.resolver
 from add_account import AddAccounts
 from default_values import DF, Add_Values
@@ -23,7 +24,7 @@ from dotenv import load_dotenv
 import os
 import secrets
 import string
-
+from decimal import Decimal, ROUND_HALF_UP
 load_dotenv()
 
 # Function to generate a secure random password
@@ -150,6 +151,8 @@ if True:
                 if request.form.get('remove1') == "remove1":
                     id = int(request.form['id'])
                     p = Products.query.filter_by(id=id).first()
+                    stripe.Product.modify(p.product_stripe_id, active=False)
+                    stripe.Price.modify(p.product_price_stripe_id, active=False)
                     relations = CategoryAndProduct.query.filter_by(productid=p.id).all()
                     for rel in relations:
                         db.session.delete(rel)
@@ -267,6 +270,16 @@ if True:
             return render_template('foodmart1/admin_customers.html', p=users)
         else:
             return redirect(url_for('home'))
+    @app.route('/view_orders')
+    def view_order():
+        order_id = int(session['order_id'])
+        del session['order_id']
+        # users_in_usa = (User.query
+        #                 .join(Address_User).join(City).join(ProvinceOrTerritories).join(Country).filter(Country.name == 'United States').all())
+        Order = Orders.query.filter_by(id=order_id).first()
+        order_items = Order_items.query.filter_by(order_id=Order.id).all()
+        o = (Order.query.join())
+        return render_template('view_order.html',o=order_items)
     @app.route('/edit_customer', methods=['POST', 'GET'])
     def edit_customer():
         if session['role'] == 'Admin' or session['role'] == 'Owner':
@@ -390,8 +403,23 @@ if True:
                 image = request.form['image']
                 category = request.form.getlist('category')
                 print('done variebles')
+                amt = Decimal(str(price))
+                # Round to 2 decimal places to be safe (cents precision)
+                amt = amt.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                # Multiply by 100 to get cents
+                cents = int(amt * 100)
+                s_product = stripe.Product.create(
+                    name=name,
+                    description=desc
+                )
 
-                cat = Products(name=name, about=desc, price=int(price), stock=int(stock), image=image)
+                # Create price for that product
+                s_price = stripe.Price.create(
+                    product=s_product.id,
+                    unit_amount=cents,  # in cents, e.g. $20.00
+                    currency="usd",
+                )
+                cat = Products(name=name, about=desc, price=int(price), stock=int(stock), image=image,product_stripe_id=s_product.id,product_price_stripe_id=s_price.id)
                 db.session.add(cat)
                 db.session.commit()
                 for i in category:
@@ -399,13 +427,8 @@ if True:
                     db.session.add(relation)
                     db.session.commit()
                 print('done')
-                product_in_stripe = stripe.Product.create(name=name)
-                productid_in_stripe = product_in_stripe['id']
-                price_in_stripe = stripe.Price.create(
-                    product=productid_in_stripe,
-                    unit_amount=int(price),
-                    currency="usd",
-                )
+
+
                 return redirect(url_for('admin_products'))
             cats = Category.query.all()
             return render_template('foodmart1/add_product.html',cats=cats)
@@ -460,9 +483,32 @@ if True:
                 except Exception as e:
                     print("Problem with session['categoryid']:", e)
                     return "No id found in session", 400
-
                 print('cat debugg start')
                 cat = Products.query.filter_by(id=int(id)).first()
+
+
+                amt = Decimal(str(price))
+                amt = amt.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                cents = int(amt * 100)
+                # update product name or description
+                product = stripe.Product.modify(
+                    cat.product_stripe_id,  # your existing product's id
+                    name=name,
+                    description=desc
+                )
+
+                # create a new price under the same product
+                new_price = stripe.Price.create(
+                    product=product.id,
+                    unit_amount=cents,
+                    currency="usd"
+                )
+
+                # deactivate the old price so only the new one is used
+                stripe.Price.modify(
+                    cat.product_price_stripe_id,  # your old price object's id
+                    active=False
+                )
                 print('cat debugg end')
                 if cat:
                     print('yooooo')
@@ -471,6 +517,7 @@ if True:
                     cat.price = price
                     cat.stock = stock
                     cat.image = image
+                    cat.product_price_stripe_id = new_price.id
                     for i in category:
                         print(type(i),category)
                         rel = CategoryAndProduct.query.filter_by(productid=cat.id).first()
