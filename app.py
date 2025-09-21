@@ -278,7 +278,15 @@ if True:
         #                 .join(Address_User).join(City).join(ProvinceOrTerritories).join(Country).filter(Country.name == 'United States').all())
         Order = Orders.query.filter_by(id=order_id).first()
         order_items = Order_items.query.filter_by(order_id=Order.id).all()
-        o = (Order.query.join())
+        # Updated by JavadSarlak------------
+        order_with_details = Orders.query\
+            .join(Order_items, Orders.items)\
+            .join(Product, Order_items.product_id == Product.id)\
+            .filter(Orders.id == order_id)\
+            .add_entity(Order_items)\
+            .add_entity(Product)\
+            .all()
+        
         return render_template('view_order.html',o=order_items)
     @app.route('/edit_customer', methods=['POST', 'GET'])
     def edit_customer():
