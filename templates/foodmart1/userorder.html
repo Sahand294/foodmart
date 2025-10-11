@@ -1,0 +1,28 @@
+{% extends "foodmart1/userprofile.html" %}
+    {% block main %}
+        <h1 class="dashboard-title">Dashboard</h1>
+
+        <!-- Recent Orders -->
+        <div class="recent-orders">
+            <table class="orders-table">
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Totall Price</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for o in orders %}
+                <tr>
+                    <td>{{o.id}}</td>
+                    <td>{{o.purchase_date}}</td>
+                    <td>${{  o.totall_price}}</td>
+                    <td><span class="status status-delivered">Delivered</span></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+{% endblock %}

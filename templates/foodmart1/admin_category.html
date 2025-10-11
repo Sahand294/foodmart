@@ -9,6 +9,10 @@
 {% block category_active %}active{% endblock %}
 {% block content %}
     <div class="grid-products">
+        <div class="product-card">
+            <div class="product-name">Name</div>
+            <div>Description</div>
+        </div>
         {% for cat in category %}
             <div class="product-card">
                 <div class="product-name">{{ cat.name }}</div>

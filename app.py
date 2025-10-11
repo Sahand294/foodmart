@@ -154,8 +154,15 @@ if True:
                     stripe.Product.modify(p.product_stripe_id, active=False)
                     stripe.Price.modify(p.product_price_stripe_id, active=False)
                     relations = CategoryAndProduct.query.filter_by(productid=p.id).all()
-                    for rel in relations:
+                    relis = CartProducts.query.filter_by(productid=p.id).all()
+                    print(relis,p.id)
+                    print(relations)
+                    for rel,l in zip(relations,relis):
                         db.session.delete(rel)
+                        db.session.commit()
+                        db.session.delete(l)
+                        db.session.commit()
+                    db.session.commit()
                     db.session.delete(p)
                     db.session.commit()
                 elif request.form.get('edit') == 'confirm':
@@ -276,8 +283,7 @@ if True:
         del session['order_id']
         # users_in_usa = (User.query
         #                 .join(Address_User).join(City).join(ProvinceOrTerritories).join(Country).filter(Country.name == 'United States').all())
-        Order = Orders.query.filter_by(id=order_id).first()
-        order_items = Order_items.query.filter_by(order_id=Order.id).all()
+
         # Updated by JavadSarlak------------
         order_with_details = Orders.query\
             .join(Order_items, Orders.items)\
@@ -287,7 +293,7 @@ if True:
             .add_entity(Products)\
             .all()
         print(order_with_details)
-        return render_template('foodmart1/view_order.html',rel=order_items)
+        return render_template('foodmart1/view_order.html',rel=order_with_details)
     @app.route('/edit_customer', methods=['POST', 'GET'])
     def edit_customer():
         if session['role'] == 'Admin' or session['role'] == 'Owner':
@@ -681,6 +687,7 @@ def orders():
         Os.append(i)
         print(i)
     return render_template('foodmart1/orders.html',o=Os)
+
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
@@ -705,13 +712,62 @@ def create_checkout_session():
             ]
             ,
             mode='payment',
-            success_url="http://127.0.0.1:5000" + '/success.html',
-            cancel_url="http://127.0.0.1:5000" + '/cancel.html',
+            success_url="http://127.0.0.1:5000" + '/success',
+            cancel_url="http://127.0.0.1:5000" + '/fail',
         )
     except Exception as e:
         return str(e)
 
     return redirect(checkout_session.url, code=303)
+@app.route('/success')
+def success():
+    return render_template('foodmart1/success.html')
+@app.route('/settings',methods=['GET','POST'])
+def usersettings():
+    user = Users.query.filter_by(id=int(session['id'])).first()
+    orders = Orders.query.filter_by(users_email=user.email).order_by(Orders.id.desc()).limit(4).all()
+    if request.method == "POST":
+        firstname = request.form.get('firstname', '').strip()
+        lastname = request.form.get('lastname', '').strip()
+        username = request.form.get('username', '').strip()
+        email = request.form.get('emails', '').strip()
+        old_password = request.form.get('old_password', '').strip()
+        new_password = request.form.get('new_password', '').strip()
+
+        update_fields = {}
+        if firstname:
+            update_fields['firstname'] = firstname
+        if lastname:
+            update_fields['lastname'] = lastname
+        if username:
+            update_fields['username'] = username
+        if email:
+            update_fields['email'] = email
+        if new_password:
+            if check_password_hash(user.password, old_password):
+                update_fields['password'] = AddAccounts.encrypting_password(new_password)
+            else:
+                flash('Current password is incorrect', 'error')
+                return render_template('foodmart1/userprofile.html', u=user, orders=orders)
+        if update_fields:
+            for field, value in update_fields.items():
+                setattr(user, field, value)
+            db.session.commit()
+    return render_template('foodmart1/usersetting.html',orders=orders,u=user)
+@app.route('/profile',methods=['Get','POST'])
+def profile():
+    user = Users.query.filter_by(id=int(session['id'])).first()
+    orders = Orders.query.filter_by(users_email=user.email).order_by(Orders.id.desc()).limit(4).all()
+
+    return render_template('foodmart1/userprofile.html', u=user, orders=orders)
+@app.route('/orders')
+def userorders():
+    user = Users.query.filter_by(id=int(session['id'])).first()
+    orders = Orders.query.filter_by(users_email=user.email).all()
+    return render_template('foodmart1/userorder.html',orders=orders,u=user)
+@app.route('/fail')
+def cancel():
+    return render_template('foodmart1/cancel.html')
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if 'role' not in session:
@@ -837,7 +893,6 @@ def contact_us():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     session['cart-message'] = ''
-    print('starting')
     if request.method == 'POST':
         print('alright doing good')
         password = request.form['password']

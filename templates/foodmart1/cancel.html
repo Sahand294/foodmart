@@ -1,0 +1,137 @@
+<!-- Cancel.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancelled - Operation Interrupted</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        .cancel-icon {
+            width: 100px;
+            height: 100px;
+            background: #f44336;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: shake 0.5s ease-in-out;
+        }
+        .cancel-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 32px;
+            font-weight: 600;
+        }
+        p {
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        .btn {
+            display: inline-block;
+            background: #f44336;
+            color: white;
+            padding: 14px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+            margin-right: 10px;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        }
+        .btn:hover:not(.btn-secondary) {
+            background: #e53935;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        .details h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .details p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .btn-group {
+            margin-bottom: 20px;
+        }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="cancel-icon">
+<svg viewBox="0 0 24 24">
+<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+</svg>
+</div>
+<h1>Operation Cancelled</h1>
+<p>The operation was not completed. No changes have been made to your account.</p>
+<div class="btn-group">
+<a href="#" class="btn">Try Again</a>
+<a href="#" class="btn btn-secondary">Return Home</a>
+</div>
+<div class="details">
+<h3>Need Help?</h3>
+<p>If you encountered an issue or need assistance, please contact our support team.</p>
+<p><strong>Email:</strong> support@example.com</p>
+<p><strong>Phone:</strong> +1 (555) 123-4567</p>
+</div>
+</div>
+</body>
+</html>

@@ -8,7 +8,7 @@
 {% block customer_active %}nope{% endblock %}
 {% block category_active %}nope{% endblock %}
 {% block content %}
-    {#<input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
+
     <div class="grid-products-wrapper">
         <input type="text" id="searchInput" class="search-input" placeholder="Search orders...">
         <select id="filterSelect" class="filter">
@@ -16,11 +16,17 @@
             <option value="much-amount">Amount above 10</option>
             <option value="much-price">Total Price above 1000$</option>
         </select>
-
         <div id="cardContainer" class="grid-products">
+        <div class="product-card">
+            <div class="product-name">User Email</div>
+            <div>Totall Price</div>
+            <div>Amount</div>
+            <div>Payment Method</div>
+            <div>Purchase date</div>
+        </div>
             {% for o in o %}
                 <div class="product-card"
-                     data-name="{{ o.cart | lower }}"
+                     data-name="{{ o.users_email | lower }}"
                      data-amount="{{ 'much-amount' if o.amount > 9 else 'low-amount' }}"
                      data-price="{{ 'much-price' if o.totall_price > 999 else 'low-price' }}">
 
@@ -35,6 +41,7 @@
                             <button class="btn" type="submit" name="edit" value="confirm">View Order</button>
                         </form>
                     </div>
+
                 </div>
             {% endfor %}
         </div>

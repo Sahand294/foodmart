@@ -1,0 +1,229 @@
+{% extends "foodmart1/userprofile.html" %}
+{% block css %}
+<style>
+
+
+    {#aside {#}
+    {#  width: 300px;#}
+    {#  background: #fff;#}
+    {#  box-shadow: 2px 0 10px rgba(0,0,0,0.08);#}
+    {#  padding: 20px;#}
+    {#  display: flex;#}
+    {#  flex-direction: column;#}
+
+    .title { text-align:center; margin-bottom:15px; color:#007BFF; }
+    .orders-list { flex-grow:1; overflow-y:auto; }
+    .order-item {
+      border:1px solid #e6e9ee; border-radius:8px; padding:10px; margin-bottom:10px; background:#fafafa;
+    }
+
+    main { flex-grow:1; display:flex; justify-content:center; align-items:center; padding:30px; }
+    .form-container {
+      background:white; padding:36px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.06);
+      width:440px; transition:all .25s ease;
+    }
+    .h1 { text-align:center; margin-bottom:22px; color:#007BFF; }
+
+    .form-group { position:relative; margin-bottom:18px; }
+    .form-group label {
+      position:absolute; left:12px; top:12px; color:#888; font-size:14px; transition:all .18s ease;
+      pointer-events:none; background:transparent; padding:0 4px;
+    }
+
+    .form-group.has-value label,
+    .form-group input:focus + label {
+      top:-8px; left:8px; font-size:12px; color:#007BFF; background:white;
+    }
+
+    input {
+      width:100%; padding:12px 12px 12px 12px; padding-top:20px;
+      border:1px solid #d0d6dd; border-radius:8px; font-size:15px; outline:none; transition:border-color .15s;
+    }
+    input:focus { border-color:#007BFF; }
+
+    #submit-btn {
+      width:100%; padding:12px; border:none; border-radius:8px; background:#007BFF; color:white; font-size:16px;
+      cursor:pointer; display:none;
+    }
+    #submit-btn:hover { background:#0056b3; }
+
+    .last-update {
+      margin-top:14px; font-size:13px; color:#555; background:#f9f9f9; padding:10px; border-radius:8px; border:1px solid #e6e9ee;
+      white-space:pre-wrap;
+    }
+
+    /* responsive */
+    @media (max-width:900px) {
+      aside { display:none; }
+      .form-container { width:100%; max-width:520px; margin:0 12px; }
+    }
+  </style>
+{% endblock %}
+
+
+{% block main %}
+    <div class="form-container">
+      <h1 class="title">Update Profile</h1>
+
+      <!-- form has an id but the JS also robustly finds the form if id is missing -->
+      <form id="profile-form" method="POST" action="/settings">
+        <div class="form-group">
+          <input type="text" id="firstname" name="firstname"  placeholder="{{ u.firstname }}" />
+          <label for="firstname">First Name</label>
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="lastname" name="lastname"  placeholder="{{ u.lastname}}" />
+          <label for="lastname">Last Name</label>
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="username" name="username"  placeholder="{{ u.username}}" />
+          <label for="username">Username</label>
+        </div>
+
+        <div class="form-group">
+          <!-- current password -->
+          <input type="password" id="current_password" name="current_password" autocomplete="current-password" />
+          <label for="current_password">Current password</label>
+        </div>
+
+        <div class="form-group">
+          <!-- new password -->
+          <input type="password" id="new_password" name="new_password" autocomplete="new-password" />
+          <label for="new_password">New password</label>
+        </div>
+
+        <div class="form-group">
+          <input type="email" id="email" name="email" placeholder="{{ u.email}}" />
+          <label for="email">Email</label>
+        </div>
+
+        <button type="submit" id="submit-btn">Submit Changes</button>
+      </form>
+
+      <div class="last-update" id="last-update">No updates submitted yet.</div>
+    </div>
+{% endblock %}
+
+  <!-- Robust JS: replace your existing script with this block -->
+{% block js %}
+<script>
+(function () {
+  // locate the form robustly (by id, by action, or fallback to first form)
+  const form =
+    document.getElementById('profile-form') ||
+    document.querySelector('form[action="/profile"]') ||
+    document.querySelector('form');
+
+  if (!form) {
+    console.error('No form found on the page.');
+    return;
+  }
+
+  // find submit button (by id or the form's submit button)
+  const submitBtn = document.getElementById('submit-btn') || form.querySelector('button[type="submit"]');
+  const lastUpdate = document.getElementById('last-update');
+
+  // gather all inputs that have a name (only named inputs are submitted)
+  const inputs = Array.from(form.querySelectorAll('input[name]'));
+
+  // record each element's original value (prefers value attr, then placeholder)
+  inputs.forEach((inp) => {
+    // prefer actual value (if server put it into value=""), otherwise fallback to attribute value or placeholder
+    const valueAttr = inp.getAttribute('value');
+    const orig = (inp.value && inp.value.trim() !== '') ? inp.value
+               : (valueAttr != null ? valueAttr : (inp.placeholder || ''));
+
+    // store per-element original so duplicate names are handled
+    inp.dataset._orig = String(orig).trim();
+
+    // set floating label class if there was an original value
+    const group = inp.closest('.form-group');
+    if (group) {
+      if (inp.dataset._orig !== '' || (inp.value && inp.value.trim() !== '')) group.classList.add('has-value');
+      else group.classList.remove('has-value');
+    }
+  });
+
+  // helper: does this input count as 'changed'?
+  function isChanged(inp) {
+    const cur = (inp.value || '').trim();
+    const orig = (inp.dataset._orig || '').trim();
+    if (orig === '') return cur !== '';        // originally empty -> changed if non-empty
+    return cur !== orig;                       // originally non-empty -> changed if different
+  }
+
+  // toggle form-group .has-value class for floating label visuals
+  function refreshHasValue(inp) {
+    const group = inp.closest('.form-group');
+    if (!group) return;
+    if ((inp.value || '').trim() !== '') group.classList.add('has-value');
+    else {
+      // keep floated if original existed
+      if ((inp.dataset._orig || '').trim() !== '') group.classList.add('has-value');
+      else group.classList.remove('has-value');
+    }
+  }
+
+  // show/hide submit button when any input changed
+  function checkInputs() {
+    const anyChanged = inputs.some(isChanged);
+    if (submitBtn) submitBtn.style.display = anyChanged ? 'block' : 'none';
+  }
+
+  // wire events
+  inputs.forEach((inp) => {
+    // update float and change detection on user input
+    inp.addEventListener('input', () => {
+      refreshHasValue(inp);
+      checkInputs();
+    });
+
+    // if value comes from browser autofill after page load, try to pick that up
+    // small timeout to allow autofill to set values
+    setTimeout(() => refreshHasValue(inp), 50);
+  });
+
+  // initial check
+  checkInputs();
+
+  // Submit handler: disable unchanged inputs so the browser POST only sends changed fields
+  form.addEventListener('submit', function (e) {
+    // prevent default so we can disable inputs first, then submit
+    e.preventDefault();
+
+    // collect changed data for display (optional)
+    const changed = {};
+    inputs.forEach((inp) => {
+      if (isChanged(inp)) {
+        // include changed values
+        changed[inp.name] = (inp.value || '').trim();
+      } else {
+        // disable unchanged or empty fields so they are not submitted
+        inp.disabled = true;
+      }
+    });
+
+    // show last update summary (if present)
+    if (lastUpdate) {
+      if (Object.keys(changed).length > 0) {
+        lastUpdate.textContent = 'Last update:\\n' + JSON.stringify(changed, null, 2);
+      } else {
+        lastUpdate.textContent = 'No changes to submit.';
+      }
+    }
+
+    // submit the form normally (this will include only the enabled/changed fields)
+    // Re-enable inputs after a tiny delay in case something in-page needs them before navigation
+    // (navigation will usually occur and page will unload)
+    form.submit();
+
+    setTimeout(() => {
+      inputs.forEach(i => i.disabled = false);
+    }, 5000);
+  });
+})();
+</script>
+
+{% endblock %}

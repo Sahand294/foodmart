@@ -1,19 +1,35 @@
+{% extends "foodmart1/dashboard.html" %}
+
+{% block title %}Products - Admin{% endblock %}
+
+{% block dash_active %}nope{% endblock %}
+{% block order_active %}active{% endblock %}
+{% block product_active %}nope{% endblock %}
+{% block customer_active %}nope{% endblock %}
+{% block category_active %}nope{% endblock %}
 {% block content %}
-<div class="grid-products-wrapper">
 
-  <div id="cardContainer" class="grid-products">
-    {% for item in rel%}
-    <div class="product-card">
+    <div id="cardContainer" class="grid-products">
+        <div class="product-card">
+            <div class="product-name">User Email</div>
+            <div>Cart Id</div>
+            <div>Order Id</div>
+            <div>Amount</div>
+            <div>Product Name</div>
+            <div>Totall Price</div>
+        </div>
+        {% for item in rel %}
+            <div class="product-card">
 
-        <div class="product-name"> cart id:{{ item.Order_items.cart_id }}</div>
-        <div>order id :{{ item.Order_items.order_id }}</div>
-        <div>amount:{{ item.Orders.amount }}</div>
-        <div>product name:{{ item.Products.name }}</div>
-        <div>totall price:{{ item.Order_items.price }}</div>
+                <div class="product-name"> cart id:{{ item.Order_items.cart_id }}</div>
+                <div>order id :{{ item.Order_items.order_id }}</div>
+                <div>amount:{{ item.Orders.amount }}</div>
+                <div>product name:{{ item.Products.name }}</div>
+                <div>totall price:{{ item.Order_items.price }}</div>
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 
-  <div id="paginationControls"></div>
-</div>
+    <div id="paginationControls"></div>
 {% endblock %}
+

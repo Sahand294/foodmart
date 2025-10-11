@@ -9,134 +9,140 @@
 {% block category_active %}nope{% endblock %}
 {% block content %}
     <div class="grid-products">
-  <!-- Search + Filter Controls -->
-  <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
-  <select id="filterSelect" class="filter">
-    <option value="all">All</option>
-    <option value="much-amount">Amount above 50</option>
-    <option value="much-price">Total Price above 100$</option>
-    {% for c in cat %}
-      <option value="{{ c.name | lower}}">Category: {{ c.name }}</option>
-    {% endfor %}
-  </select>
+        <!-- Search + Filter Controls -->
+        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+        <select id="filterSelect" class="filter">
+            <option value="all">All</option>
+            <option value="much-amount">Amount above 50</option>
+            <option value="much-price">Total Price above 100$</option>
+            {% for c in cat %}
+                <option value="{{ c.name | lower }}">Category: {{ c.name }}</option>
+            {% endfor %}
+        </select>
 
-  <!-- Products -->
-  <div id="productContainer">
-    {% for p in product %}
-      <div class="product-card"
-           data-name="{{ p.name | lower }}"
-           data-cat="{% for c in p.categories %}{{ c.name | lower }} {% endfor %}"
-           data-amount="{{ 'much-amount' if p.stock > 50 else 'low-amount' }}"
-           data-price="{{ 'much-price' if p.price > 100 else 'low-price' }}">
-        <div>Categories:
-          {% for c in p.categories %}
-            <span class="badge bg-secondary">{{ c.name }}</span>
-          {% endfor %}
+        <!-- Products -->
+        <div id="productContainer">
+            <div class="product-card">
+                <div class="product-name">Categories</div>
+                <div>Name</div>
+                <div>Price</div>
+                <div>Stock</div>
+            </div>
+            {% for p in product %}
+                <div class="product-card"
+                     data-name="{{ p.name | lower }}"
+                     data-cat="{% for c in p.categories %}{{ c.name | lower }} {% endfor %}"
+                     data-amount="{{ 'much-amount' if p.stock > 50 else 'low-amount' }}"
+                     data-price="{{ 'much-price' if p.price > 100 else 'low-price' }}">
+                    <div>Categories:
+                        {% for c in p.categories %}
+                            <span class="badge bg-secondary">{{ c.name }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="product-name">{{ p.name }}</div>
+                    <div>${{ p.price }}</div>
+                    <div>Stock: {{ p.stock }}</div>
+
+                    <div class="product-actions">
+                        <form method="POST" action="/admin_products">
+                            <input type="hidden" name="id" value="{{ p.id }}">
+                            <button class="btn" type="submit" name="edit" value="confirm">✏️ Edit</button>
+                        </form>
+                        <form method="POST" action="/admin_products">
+                            <input type="hidden" name="id" value="{{ p.id }}">
+                            <button class="btn" name="remove1" value="remove1">🗑️ Remove</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
 
-        <div class="product-name">{{ p.name }}</div>
-        <div>${{ p.price }}</div>
-        <div>Stock: {{ p.stock }}</div>
+        <!-- Pagination controls -->
+        <div id="paginationControls"></div>
 
-        <div class="product-actions">
-          <form method="POST" action="/admin_products">
-            <input type="hidden" name="id" value="{{ p.id }}">
-            <button class="btn" type="submit" name="edit" value="confirm">✏️ Edit</button>
-          </form>
-          <form method="POST" action="/admin_products">
-            <input type="hidden" name="id" value="{{ p.id }}">
-            <button class="btn" name="remove1" value="remove1">🗑️ Remove</button>
-          </form>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-
-  <!-- Pagination controls -->
-  <div id="paginationControls"></div>
-
-  <form method="POST" action="/admin_products">
-    <button class="add-card" type="submit" name="add_pro" value="confirmed">+ Add Product</button>
-  </form>
-</div>
+        <form method="POST" action="/admin_products">
+            <button class="add-card" type="submit" name="add_pro" value="confirmed">+ Add Product</button>
+        </form>
+    </div>
 
 {% endblock %}
 
 {% block js %}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const productsPerPage = 10; // how many per page
-  const searchInput = document.getElementById('searchInput');
-  const filterSelect = document.getElementById('filterSelect');
-  const productContainer = document.getElementById('productContainer');
-  const paginationControls = document.getElementById('paginationControls');
-  const allProducts = Array.from(productContainer.querySelectorAll('.product-card'));
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const productsPerPage = 10; // how many per page
+            const searchInput = document.getElementById('searchInput');
+            const filterSelect = document.getElementById('filterSelect');
+            const productContainer = document.getElementById('productContainer');
+            const paginationControls = document.getElementById('paginationControls');
+            const allProducts = Array.from(productContainer.querySelectorAll('.product-card'));
 
-  let currentPage = 1;
-  let filteredProducts = allProducts;
+            let currentPage = 1;
+            let filteredProducts = allProducts;
 
-  function renderProducts() {
-    // Hide all
-    allProducts.forEach(card => card.style.display = 'none');
+            function renderProducts() {
+                // Hide all
+                allProducts.forEach(card => card.style.display = 'none');
 
-    // Show only current page items
-    const start = (currentPage - 1) * productsPerPage;
-    const end = start + productsPerPage;
-    filteredProducts.slice(start, end).forEach(card => card.style.display = '');
+                // Show only current page items
+                const start = (currentPage - 1) * productsPerPage;
+                const end = start + productsPerPage;
+                filteredProducts.slice(start, end).forEach(card => card.style.display = '');
 
-    renderPagination();
-  }
+                renderPagination();
+            }
 
-  function renderPagination() {
-    paginationControls.innerHTML = '';
-    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-    for (let i = 1; i <= totalPages; i++) {
-      const btn = document.createElement('button');
-      btn.textContent = i;
-      btn.className = i === currentPage ? 'active-page' : '';
-      btn.addEventListener('click', () => {
-        currentPage = i;
-        renderProducts();
-      });
-      paginationControls.appendChild(btn);
-    }
-  }
+            function renderPagination() {
+                paginationControls.innerHTML = '';
+                const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+                for (let i = 1; i <= totalPages; i++) {
+                    const btn = document.createElement('button');
+                    btn.textContent = i;
+                    btn.className = i === currentPage ? 'active-page' : '';
+                    btn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderProducts();
+                    });
+                    paginationControls.appendChild(btn);
+                }
+            }
 
-  function filterProducts() {
-    const searchVal = searchInput.value.toLowerCase();
-    const filterVal = filterSelect.value;
+            function filterProducts() {
+                const searchVal = searchInput.value.toLowerCase();
+                const filterVal = filterSelect.value;
 
-    filteredProducts = allProducts.filter(card => {
-      const name = card.dataset.name;
-      const cat = card.dataset.cat;
-      const amount = card.dataset.amount;
-      const price = card.dataset.price;
+                filteredProducts = allProducts.filter(card => {
+                    const name = card.dataset.name;
+                    const cat = card.dataset.cat;
+                    const amount = card.dataset.amount;
+                    const price = card.dataset.price;
 
-      let matches = name.includes(searchVal);
+                    let matches = name.includes(searchVal);
 
-      if (filterVal !== 'all') {
-        matches = matches && (
-          amount === filterVal ||
-          price === filterVal ||
-          cat.includes(filterVal)
-        );
-      }
+                    if (filterVal !== 'all') {
+                        matches = matches && (
+                            amount === filterVal ||
+                            price === filterVal ||
+                            cat.includes(filterVal)
+                        );
+                    }
 
-      return matches;
-    });
+                    return matches;
+                });
 
-    currentPage = 1; // reset to first page
-    renderProducts();
-  }
+                currentPage = 1; // reset to first page
+                renderProducts();
+            }
 
-  // Event listeners
-  searchInput.addEventListener('input', filterProducts);
-  filterSelect.addEventListener('change', filterProducts);
+            // Event listeners
+            searchInput.addEventListener('input', filterProducts);
+            filterSelect.addEventListener('change', filterProducts);
 
-  // Initial render
-  filterProducts();
-});
-</script>
+            // Initial render
+            filterProducts();
+        });
+    </script>
 
 
 {% endblock %}

@@ -11,15 +11,22 @@
 {% block content %}
 
     <div class="grid-products">
-    <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
-    <select id="filterSelect" class="filter">
-      <option value="all">All</option>
-      <option value="much-amount">Amount above 20</option>
-    </select>
-{#        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
+        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">
+        <select id="filterSelect" class="filter">
+            <option value="all">All</option>
+            <option value="much-amount">Amount above 20</option>
+        </select>
+        {#        <input type="text" id="searchInput" class="search-input" placeholder="Search products...">#}
+        <div class="product-card">
+            <div class="product-name">Email</div>
+            <div>Username</div>
+            <div>Firstname,Lastname</div>
+        </div>
         {% for p in p %}
-            <div class="product-card" data-name="{{ p[0].email | lower }}" data-amount="{{ 'much-amount' if p[1] > 19 else 'low-amount' }}">
+            <div class="product-card" data-name="{{ p[0].email | lower }}"
+                 data-amount="{{ 'much-amount' if p[1] > 19 else 'low-amount' }}">
                 <div class="product-name">{{ p[0].email }}</div>
+                <div>{{ p[0].username }}</div>
                 <div>{{ p[0].firstname }},{{ p[0].lastname }}</div>
                 <div class="product-actions">
                     <form method="POST" action="/admin_customers">
@@ -38,47 +45,47 @@
 {% endblock %}
 
 {% block js %}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const searchInput = document.getElementById('searchInput'); // new
-  const filterSelect = document.getElementById('filterSelect');
-  const productCards = document.querySelectorAll('.product-card');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput'); // new
+            const filterSelect = document.getElementById('filterSelect');
+            const productCards = document.querySelectorAll('.product-card');
 
-  function filterProducts() {
-    const searchText = (searchInput?.value || '').trim().toLowerCase(); // new
-    const filterValue = filterSelect.value;
+            function filterProducts() {
+                const searchText = (searchInput?.value || '').trim().toLowerCase(); // new
+                const filterValue = filterSelect.value;
 
-    productCards.forEach(card => {
-      const name = (card.dataset.name || '').toLowerCase();  // new
-      const amountStatus = card.dataset.amount; // "much-amount" or "low-amount"
-      const priceStatus = card.dataset.price;   // "much-price" or "low-price"
+                productCards.forEach(card => {
+                    const name = (card.dataset.name || '').toLowerCase();  // new
+                    const amountStatus = card.dataset.amount; // "much-amount" or "low-amount"
+                    const priceStatus = card.dataset.price;   // "much-price" or "low-price"
 
-      // search matches name?
-      const matchesSearch = name.includes(searchText);
+                    // search matches name?
+                    const matchesSearch = name.includes(searchText);
 
-      // filter matches?
-      let matchesFilter = false;
-      if (filterValue === 'all') {
-        matchesFilter = true;
-      } else if (filterValue === 'much-amount') {
-        matchesFilter = (amountStatus === 'much-amount');
-      } else if (filterValue === 'much-price') {
-        matchesFilter = (priceStatus === 'much-price');
-      }
+                    // filter matches?
+                    let matchesFilter = false;
+                    if (filterValue === 'all') {
+                        matchesFilter = true;
+                    } else if (filterValue === 'much-amount') {
+                        matchesFilter = (amountStatus === 'much-amount');
+                    } else if (filterValue === 'much-price') {
+                        matchesFilter = (priceStatus === 'much-price');
+                    }
 
-      // show if both match
-      card.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
-    });
-  }
+                    // show if both match
+                    card.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
+                });
+            }
 
-  filterSelect.addEventListener('change', filterProducts);
-  if (searchInput) {
-    searchInput.addEventListener('input', filterProducts); // new
-  }
+            filterSelect.addEventListener('change', filterProducts);
+            if (searchInput) {
+                searchInput.addEventListener('input', filterProducts); // new
+            }
 
-  // Initial run
-  filterProducts();
-});
-</script>
+            // Initial run
+            filterProducts();
+        });
+    </script>
 
 {% endblock %}
