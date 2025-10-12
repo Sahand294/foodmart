@@ -8,22 +8,18 @@
             <thead>
             <tr>
                 <th>Order ID</th>
-                <th>Date</th>
+                <th>Product Id</th>
+                <th>Amount</th>
                 <th>Totall Price</th>
-                <th>Status</th>
             </tr>
             </thead>
             <tbody>
             {% for o in orders %}
             <tr>
                 <td>{{ o.id }}</td>
-                <td>{{ o.purchase_date }}</td>
-                <td>${{ o.totall_price }}</td>
-                <td><span class="status status-delivered">Delivered</span></td>
-                <td><form method="POST">
-                    <input type="hidden" name="id" id="id" value="{{ o.id }}">
-                <button type="submit">See Details</button>
-                    </form></td>
+                <td>{{ o.product_id }}</td>
+                <td>{{ o.amount }}</td>
+                <td>${{ o.price }}</td>
             </tr>
             {% endfor %}
             </tbody>

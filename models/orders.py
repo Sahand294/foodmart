@@ -8,6 +8,7 @@ class Orders(db.Model):
     amount = db.Column(db.Integer)
     status = db.Column(db.String(50))
     payment_method = db.Column(db.String(50))
+    address = db.Column(db.Integer,db.ForeignKey('address_user.id'))
 
     items = db.relationship(
         'Order_items',
