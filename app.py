@@ -2,6 +2,7 @@ from flask import Flask, render_template, session, url_for, request, redirect, f
     render_template_string
 from flask_migrate import Migrate
 from config import Config
+from models.address import Address_User
 from sending_emails import Send
 import re
 from models.orders import Orders,Order_items
@@ -33,8 +34,9 @@ def generate_password(length=12):
     chars = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(chars) for _ in range(length))
 
-
-stripe.api_key = "sk_test_51S9OlcDbgzKCvypomEvrVhNMuKwDGOrLguD75RpC64dQJXeyTP2MYksXBKlsa68Q8OENB9ndns1GsEBs982nyn4V0058oqhGNg"
+sec = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = sec
+# stripe.api_key = "sk_test_51S9OlcDbgzKCvypomEvrVhNMuKwDGOrLguD75RpC64dQJXeyTP2MYksXBKlsa68Q8OENB9ndns1GsEBs982nyn4V0058oqhGNg"
 
 
 
