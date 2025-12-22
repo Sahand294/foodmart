@@ -1,3 +1,4 @@
+from add_account import AddAccounts
 from models import Roles
 from models import db
 from models.sitesetting import SiteSetting
@@ -12,6 +13,7 @@ def DF(app):
     with app.app_context():
         customer = Roles.query.filter_by(name="Customer").first()
         admin = Roles.query.filter_by(name="Admin").first()
+        owner = Roles.query.filter_by(name="Owner").first()
 
         if not customer:
             c = Roles(name='Customer', description='Buys stuff from shop')
@@ -21,6 +23,10 @@ def DF(app):
 
         if not admin:
             a = Roles(name='Admin', description='Has access to config, edits the website, and can kick members')
+            db.session.add(a)
+            db.session.commit()
+        if not owner:
+            a = Roles(name='Owner', description='Can do anything')
             db.session.add(a)
             db.session.commit()
 
@@ -129,9 +135,8 @@ def Add_Values(Logo,Name,user,reciever,T,Installed,smtp_po,smtp_s,smtp_pa,owneru
     if smtp_server:
         smtp_server.Value = smtp_s
         db.session.commit()
-    adminid = Roles.query.filter_by(name='Admin').first()
+    adminid = Roles.query.filter_by(name='Owner').first()
     print(adminid)
-    owner = Users(firstname=ownerfirstname,lastname=ownerlastname,password=ownerpassword,email=owneremail,username=ownerusername,roleid=int(adminid.id))
-    db.session.add(owner)
-    db.session.commit()
+    AddAccounts.add(firstname=ownerfirstname,lastname=ownerlastname,password=ownerpassword,email=owneremail,username=ownerusername,role='Owner')
+
 

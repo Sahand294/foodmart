@@ -5,7 +5,7 @@ from config import Config
 from models.address import Address_User
 from sending_emails import Send
 import re
-from models.orders import Orders,Order_items
+from models.orders import Orders, Order_items
 import dns.resolver
 from add_account import AddAccounts
 from default_values import DF, Add_Values
@@ -27,17 +27,33 @@ import secrets
 import string
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import date
+
+from models.address import *
+from models.brandcategory import *
+from models.brands import *
+from models.cart import *
+from models.category import *
+from models.discounts import *
+from models.manytomany import *
+from models.orders import *
+from models.paymentmethod import *
+from models.products import *
+from models.review import *
+from models.shippingmethod import *
+from models.sitesetting import *
+from models.users import *
+
 load_dotenv()
+
 
 # Function to generate a secure random password
 def generate_password(length=12):
     chars = string.ascii_letters + string.digits + string.punctuation
     return ''.join(secrets.choice(chars) for _ in range(length))
 
+
 sec = os.getenv("STRIPE_SECRET_KEY")
 stripe.api_key = sec
-# stripe.api_key = "sk_test_51S9OlcDbgzKCvypomEvrVhNMuKwDGOrLguD75RpC64dQJXeyTP2MYksXBKlsa68Q8OENB9ndns1GsEBs982nyn4V0058oqhGNg"
-
 
 
 # it is up to date!
@@ -73,6 +89,7 @@ migrate = Migrate(app, db)
 app.jinja_env.globals.update(zip=zip)
 app.jinja_env.filters['zip'] = zip
 
+
 @app.route('/install', methods=['GET', 'POST'])
 def install():
     global app
@@ -107,12 +124,13 @@ def install():
         email = request.form['email']
         password = request.form['password']
 
-        Add_Values(logo, name, smtp_user, receiver, template, 'True',
-                   smtp_port, smtp_server, smtp_pass, username, password, firstname, lastname, email)
+        Add_Values(logo, name, smtp_user, receiver, template, 'True', smtp_port, smtp_server, smtp_pass, username,
+                   password, firstname, lastname, email)
         session['websitename'] = Connect.get_value('Name')
         return redirect(url_for('home'))
 
     return render_template('foodmart1/install.html')
+
 
 if True:
     # @app.route('/admin_products', methods=["POST", "GET"])
@@ -158,9 +176,9 @@ if True:
                     stripe.Price.modify(p.product_price_stripe_id, active=False)
                     relations = CategoryAndProduct.query.filter_by(productid=p.id).all()
                     relis = CartProducts.query.filter_by(productid=p.id).all()
-                    print(relis,p.id)
+                    print(relis, p.id)
                     print(relations)
-                    for rel,l in zip(relations,relis):
+                    for rel, l in zip(relations, relis):
                         db.session.delete(rel)
                         db.session.commit()
                         db.session.delete(l)
@@ -184,9 +202,11 @@ if True:
             #         print('relation:::::::::',r.categoryid,'product:',r.productid)
             #     product_categories[p.id] = [db.session.get(Category, rel.categoryid) for rel in relations]
             category = Category.query.all()
-            return render_template('foodmart1/admin_products.html', product=products,product_categories=product_categories,cat=category)
+            return render_template('foodmart1/admin_products.html', product=products,
+                                   product_categories=product_categories, cat=category)
         else:
             return redirect(url_for('home'))
+
 
     @app.route('/admin_categorys', methods=['GET', 'POST'])
     def admin_category():
@@ -224,6 +244,7 @@ if True:
             return render_template('foodmart1/admin_category.html', category=cat)
         else:
             return redirect(url_for('home'))
+
 
     @app.route('/admin_customers', methods=['GET', 'POST'])
     def admin_customer():
@@ -265,21 +286,21 @@ if True:
                     n = Carts.query.filter_by(user=int(i.id)).first()
                     rel = CartProducts.query.filter_by(cartid=int(n.id)).all()
                     for u in rel:
-
                         k += int(u.amount)
                     print('ammount', k)
-                    users.append([i,k])
+                    users.append([i, k])
                 else:
                     n = Carts.query.filter_by(user=int(i.id)).first()
                     rel = CartProducts.query.filter_by(cartid=int(n.id)).all()
                     for u in rel:
-
                         k += int(u.amount)
                     print('ammount', k)
-                    users.append([i,k])
+                    users.append([i, k])
             return render_template('foodmart1/admin_customers.html', p=users)
         else:
             return redirect(url_for('home'))
+
+
     @app.route('/view_orders')
     def view_order():
         order_id = int(session['order_id'])
@@ -288,15 +309,17 @@ if True:
         #                 .join(Address_User).join(City).join(ProvinceOrTerritories).join(Country).filter(Country.name == 'United States').all())
 
         # Updated by JavadSarlak------------
-        order_with_details = Orders.query\
-            .join(Order_items, Orders.items)\
-            .join(Products, Order_items.product_id == Products.id)\
-            .filter(Orders.id == order_id)\
-            .add_entity(Order_items)\
-            .add_entity(Products)\
+        order_with_details = Orders.query \
+            .join(Order_items, Orders.items) \
+            .join(Products, Order_items.product_id == Products.id) \
+            .filter(Orders.id == order_id) \
+            .add_entity(Order_items) \
+            .add_entity(Products) \
             .all()
         print(order_with_details)
-        return render_template('foodmart1/view_order.html',rel=order_with_details)
+        return render_template('foodmart1/view_order.html', rel=order_with_details)
+
+
     @app.route('/edit_customer', methods=['POST', 'GET'])
     def edit_customer():
         if session['role'] == 'Admin' or session['role'] == 'Owner':
@@ -316,7 +339,7 @@ if True:
                     print('doing it')
                     password = generate_password()
                     subject = f"Hello {firstname}"
-                    body =  f"""
+                    body = f"""
                                     Hello {firstname} {lastname},
                                     
                                     Your account has been successfully created/updated by our administrator.
@@ -347,6 +370,7 @@ if True:
             return render_template('foodmart1/edit_customers.html')
         else:
             return redirect(url_for('home'))
+
 
     @app.route('/add_customers', methods=['POST', 'GET'])
     def add_customer():
@@ -388,11 +412,21 @@ if True:
                                         The YourWebsite Team
                                         """
                         Send.send_mail(subject, email, body, email, False)
-                        AddAccounts.add(email, firstname, lastname, username, password)
+                        role = session['role']
+                        if role == 'Owner':
+                            role = request.form.get('role', '').strip()
+                            AddAccounts.add(email, firstname, lastname, username, password, role=role)
+                        else:
+                            AddAccounts.add(email, firstname, lastname, username, password)
                         return redirect(url_for('dashboard'))
+            role = session['role']
+            print(role)
+            if role == 'Owner':
+                return render_template('foodmart1/add_customer_from_dashboard.html', owner='yes')
             return render_template('foodmart1/add_customer_from_dashboard.html')
         else:
             return redirect(url_for('home'))
+
 
     @app.route('/add_category', methods=["GET", "POST"])
     def add_category():
@@ -407,6 +441,7 @@ if True:
             return render_template('foodmart1/add_category.html')
         else:
             return redirect(url_for('home'))
+
 
     @app.route('/add_product', methods=["POST", "GET"])
     def add_product():
@@ -436,7 +471,8 @@ if True:
                     unit_amount=cents,  # in cents, e.g. $20.00
                     currency="usd",
                 )
-                cat = Products(name=name, about=desc, price=int(price), stock=int(stock), image=image,product_stripe_id=s_product.id,product_price_stripe_id=s_price.id)
+                cat = Products(name=name, about=desc, price=float(price), stock=int(stock), image=image,
+                               product_stripe_id=s_product.id, product_price_stripe_id=s_price.id)
                 db.session.add(cat)
                 db.session.commit()
                 for i in category:
@@ -445,12 +481,12 @@ if True:
                     db.session.commit()
                 print('done')
 
-
                 return redirect(url_for('admin_products'))
             cats = Category.query.all()
-            return render_template('foodmart1/add_product.html',cats=cats)
+            return render_template('foodmart1/add_product.html', cats=cats)
         else:
             return redirect(url_for('home'))
+
 
     @app.route('/edit_category', methods=["POST", "GET"])
     def edit_category():
@@ -480,6 +516,7 @@ if True:
         else:
             return redirect(url_for('home'))
 
+
     @app.route('/edit_product', methods=['POST', 'GET'])
     def edit_product():
         if session['role'] == 'Admin' or session['role'] == 'Owner':
@@ -502,7 +539,6 @@ if True:
                     return "No id found in session", 400
                 print('cat debugg start')
                 cat = Products.query.filter_by(id=int(id)).first()
-
 
                 amt = Decimal(str(price))
                 amt = amt.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
@@ -536,7 +572,7 @@ if True:
                     cat.image = image
                     cat.product_price_stripe_id = new_price.id
                     for i in category:
-                        print(type(i),category)
+                        print(type(i), category)
                         rel = CategoryAndProduct.query.filter_by(productid=cat.id).first()
                         db.session.delete(rel)
                         db.session.commit()
@@ -550,9 +586,10 @@ if True:
                 return redirect(url_for('admin_products'))
             i = Products.query.filter_by(id=id).first()
             cats = Category.query.all()
-            return render_template('foodmart1/edit_product.html', info=i,cats=cats)
+            return render_template('foodmart1/edit_product.html', info=i, cats=cats)
         else:
             return redirect(url_for('home'))
+
 
 @app.route('/cart', methods=['GET', 'POST'])
 def carts():
@@ -664,7 +701,8 @@ def add_to_cart():
                 if product.stock == 0:
                     session['cart-message'] = 'sorry we have ran out!'
                 else:
-                    relation = CartProducts(cartid=int(cart.id), productid=int(product.id), amount=1,price=product.price)
+                    relation = CartProducts(cartid=int(cart.id), productid=int(product.id), amount=1,
+                                            price=product.price)
                     product.stock -= 1
                     db.session.add(relation)
                     db.session.commit()
@@ -677,13 +715,17 @@ def add_to_cart():
             location = request.form['location']
             session['cart-message'] = 'Not logged in'
             return redirect(url_for(str(location)))
+
+
 @app.route('/order_details')
 def userdetailorders():
     o = Order_items.query.filter_by(order_id=session['orderid']).all()
     user = Users.query.filter_by(id=int(session['id'])).first()
     orders = Orders.query.filter_by(users_email=user.email).all()
-    return render_template('foodmart1/userdetailorders.html',orders=o,u=user)
-@app.route('/admin_orders',methods=['POST','GET'])
+    return render_template('foodmart1/userdetailorders.html', orders=o, u=user)
+
+
+@app.route('/admin_orders', methods=['POST', 'GET'])
 def orders():
     if request.method == 'POST':
         session['order_id'] = request.form.get('id')
@@ -695,7 +737,8 @@ def orders():
     for i in o:
         Os.append(i)
         print(i)
-    return render_template('foodmart1/orders.html',o=Os)
+    return render_template('foodmart1/orders.html', o=Os)
+
 
 # @app.route('/create-checkout-session', methods=['POST'])
 # def create_checkout_session():
@@ -742,7 +785,12 @@ def orders():
 #
 #     return redirect(checkout_session.url, code=303)
 # create-checkout-session
-@app.route('/create-checkout-session', methods=['POST'])
+# create-checkout-session
+# create-checkout-session
+# create-checkout-session (minimal, replace variables/models as needed)
+# create-checkout-session
+
+@app.route("/create-checkout-session", methods=["POST"])
 def create_checkout_session():
     try:
         cart = Carts.query.filter_by(user=int(session['id'])).first()
@@ -750,74 +798,111 @@ def create_checkout_session():
         products = []
         user = Users.query.filter_by(id=int(session['id'])).first()
         session['usersemail'] = user.email
-
+        print(cart.id)
+        print(rel)
         totall_price = 0
         amount = 0
         for i in rel:
+            print(i)
             p = Products.query.filter_by(id=int(i.productid)).first()
+            # totall_price =
             totall_price += i.price
             amount += i.amount
             products.append(p)
-
+            print(p)
         session['totall_price'] = totall_price
         session['totall_amount'] = amount
-        session['all_products'] = [p.id for p in products]
+        session['all_products'] = []
+        for i in products:
+            session['all_products'].append(i.id)
         session['cart'] = cart.id
-
-        # Build line_items correctly: use the Stripe price ID string and qty
-        line_items = [
-            {
-                'price': p.product_price_stripe_id,   # MUST be a Stripe Price ID string like "price_abc123"
-                'quantity': int(qty.amount)
-            }
-            for p, qty in zip(products, rel)
-        ]
-
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=["card"],
-            mode='payment',
-            line_items=line_items,
-            # ask Stripe Checkout to collect full shipping address
+            line_items=[
+                                {
+                                    'price': price_id.product_price_stripe_id,
+                                    'quantity': int(qty.amount)
+                                }
+                                for price_id, qty in zip(products, rel)
+                            ],
+            mode="payment",
+            success_url=request.host_url + "success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.host_url + "cancel",
             shipping_address_collection={
-                "allowed_countries": ["US", "CA", "GB"]  # change to the countries you want
+                "allowed_countries": ["US", "CA"],  # Add countries you want to support
             },
-            # optionally require billing address collection
-            billing_address_collection='required',
-            success_url="http://127.0.0.1:5000/success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url="http://127.0.0.1:5000/fail",
-            metadata={
-                "cart_id": str(cart.id),
-                "user_id": str(user.id),
-            }
+            billing_address_collection="auto",  # Or "auto" to only collect if needed
+            # # Optional: customize the appearance
+            # custom_text={
+            #     "shipping_address": {
+            #         "message": "Please provide your shipping address"
+            #     },
+            # }
         )
+
+        print(checkout_session['id'])
+
+        address = ''
+        session['address'] = address
+
     except Exception as e:
+        print('error')
         return str(e)
 
     return redirect(checkout_session.url, code=303)
 
 @app.route('/success')
 def success():
+    # city = session['city']
+    # state = session['state']
+    # country = session['country']
+    # postall_code = session['postall_code']
+    # address = session['address']
+    # current_time = date.today()
+    # city = City.query.filter_by(name='city').first()
+    # country = Country.query.filter_by(name='city').first()
+    # state = City.query.filter_by(name='city').first()
+    # a = City.query.filter_by(name='city').first()
+    # if country:
+    #     pass
+    # else:
+    #     c = Country()
+    checkout_id = request.args.get('session_id')
+    print(checkout_id)
+    checkout_session = stripe.checkout.Session.modify(
+        checkout_id
+    )
+    """line1, line2, city, state, postal_code, country
+"""
+    print(checkout_session)
+    address_check = ''
+    address_check += checkout_session['customer_details']['address']['line1']
+    address_check += f', {checkout_session['customer_details']['address']['line2']}'
+    address_check += f', {checkout_session['customer_details']['address']['line2']}'
+    address_check += f', {checkout_session['customer_details']['address']['city']}'
+    address_check += f', {checkout_session['customer_details']['address']['state']}'
+    address_check += f', {checkout_session['customer_details']['address']['postal_code']}'
+    address_check += f', {checkout_session['customer_details']['address']['country']}'
     current_time = date.today()
-    # users_email = db.Column(db.String(100), db.ForeignKey('users.email'))
-    # purchase_date = db.Column(db.Date, default=datetime.date.today)
-    # totall_price = db.Column(db.Integer)
-    # amount = db.Column(db.Integer)
-    # status = db.Column(db.String(50))
-    # payment_method = db.Column(db.String(50))
-    o= Orders(users_email=session['usersemail'],purchase_date=current_time,totall_price=int(session['totall_price']),amount=int(session['totall_amount']),status='success',payment_method='paypal')
+    o = Orders(users_email=session['usersemail'], purchase_date=current_time, totall_price=int(session['totall_price']),
+               amount=int(session['totall_amount']),
+               status='success', payment_method='paypal',address=address_check)
     db.session.add(o)
     db.session.commit()
     products = []
     for i in session['all_products']:
         p = Products.query.filter_by(id=int(i)).first()
         session['productamount'] = 0
-        rel = CartProducts.query.filter_by(cartid=int(session['cart']),productid=i).first()
-        O = Order_items(order_id=o.id,product_id=p.id,cart_id=int(session['cart']),amount=rel.amount,price=rel.price)
+        rel = CartProducts.query.filter_by(cartid=int(session['cart']), productid=i).first()
+        O = Order_items(order_id=o.id, product_id=p.id, cart_id=int(session['cart']), amount=rel.amount,
+                        price=rel.price)
         db.session.add(O)
         db.session.delete(rel)
         db.session.commit()
     return render_template('foodmart1/success.html')
-@app.route('/settings',methods=['GET','POST'])
+
+
+@app.route('/settings', methods=['GET', 'POST'])
 def usersettings():
     user = Users.query.filter_by(id=int(session['id'])).first()
     orders = Orders.query.filter_by(users_email=user.email).order_by(Orders.id.desc()).limit(4).all()
@@ -826,7 +911,7 @@ def usersettings():
         lastname = request.form.get('lastname', '').strip()
         username = request.form.get('username', '').strip()
         email = request.form.get('emails', '').strip()
-        old_password = request.form.get('old_password', '').strip()
+        old_password = request.form.get('current_password', '').strip()
         new_password = request.form.get('new_password', '').strip()
 
         update_fields = {}
@@ -848,28 +933,36 @@ def usersettings():
             for field, value in update_fields.items():
                 setattr(user, field, value)
             db.session.commit()
-    return render_template('foodmart1/usersetting.html',orders=orders,u=user)
-@app.route('/profile',methods=['Get','POST'])
+    return render_template('foodmart1/usersetting.html', orders=orders, u=user)
+
+
+@app.route('/profile', methods=['Get', 'POST'])
 def profile():
     user = Users.query.filter_by(id=int(session['id'])).first()
     orders = Orders.query.filter_by(users_email=user.email).order_by(Orders.id.desc()).limit(4).all()
 
     return render_template('foodmart1/userprofile.html', u=user, orders=orders)
-@app.route('/orders',methods=['POST','GET'])
+
+
+@app.route('/orders', methods=['POST', 'GET'])
 def userorders():
     if request.method == 'POST':
         session['orderid'] = request.form.get('id')
         return redirect(url_for('userdetailorders'))
     user = Users.query.filter_by(id=int(session['id'])).first()
     orders = Orders.query.filter_by(users_email=user.email).all()
-    return render_template('foodmart1/userorder.html',orders=orders,u=user)
+    return render_template('foodmart1/userorder.html', orders=orders, u=user)
+
+
 @app.route('/fail')
 def cancel():
     return render_template('foodmart1/cancel.html')
+
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if 'role' not in session:
-        session['role']= 'guest'
+        session['role'] = 'guest'
     if 'logged' not in session:
         session['logged'] = False
     if 'productamount' not in session:
@@ -896,7 +989,7 @@ def home():
     message = ''
     if 'cart-message' in session:
         message = session['cart-message']
-    print('hi',os.getenv("STRIPE_SECRET_KEY"))
+    print('hi', os.getenv("STRIPE_SECRET_KEY"))
     return render_template('foodmart1/main2.html', name=websitename, username=user, logged=logged, productamount=amount,
                            message=message)
 
@@ -1108,6 +1201,7 @@ def dashboard():
         return render_template('foodmart1/dashboard.html')
     else:
         return redirect(url_for('home'))
+
 
 @app.route('/error401')
 def error():

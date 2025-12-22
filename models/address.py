@@ -29,7 +29,7 @@ class City(db.Model):
     __tablename__ = 'city'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
-    key = db.Column(db.String(200), unique=True)
+    # key = db.Column(db.String(200), unique=True)
     province_id = db.Column(db.Integer, db.ForeignKey('provinces.id', ondelete='CASCADE'))
 
     addresses = db.relationship(
@@ -43,6 +43,5 @@ class Address_User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     city_id = db.Column(db.Integer, db.ForeignKey('city.id', ondelete='CASCADE'))
-    address = db.Column(db.String(999))
+    street = db.Column(db.String(999))
     postal_code = db.Column(db.String(999))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'))

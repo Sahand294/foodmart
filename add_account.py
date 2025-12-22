@@ -12,8 +12,8 @@ class AddAccounts:
         """
         return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
     @staticmethod
-    def add(email,firstname,lastname,username,password):
-        roleid = Roles.query.filter_by(name='Customer').first()
+    def add(email,firstname,lastname,username,password,role='Customer'):
+        roleid = Roles.query.filter_by(name=role).first()
         print('created')
         new_password = AddAccounts.encrypting_password(password)
         user = Users(firstname=firstname,lastname=lastname,username=username,email=email,password=new_password,roleid=int(roleid.id))

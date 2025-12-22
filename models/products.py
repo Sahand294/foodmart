@@ -1,11 +1,13 @@
 from . import db,u
 import datetime
+from decimal import Decimal
+from sqlalchemy import Numeric
 class Products(db.Model):
     __tablename__ = 'products'
     id = db.Column(db.Integer,primary_key=True)
     image = db.Column(db.String(100),nullable=False)
     stock = db.Column(db.Integer)
-    price = db.Column(db.Integer)
+    price = db.Column(Numeric(10, 2))
     name = db.Column(db.String(200))
     about = db.Column(db.String(1000))
     cart_products = db.relationship('CartProducts', back_populates="product")

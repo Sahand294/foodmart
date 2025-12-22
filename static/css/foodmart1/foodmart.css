@@ -12,13 +12,18 @@ body {
     color: #333;
     background-color: #f8f9fa;
 }
-a{
-    color:white; !important;
+
+a {
+    color: white;
+!important;
     text-decoration: none;
 }
-i{
-    color:white; !important;
+
+i {
+    color: white;
+!important;
 }
+
 /* Header */
 .header {
     background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
@@ -195,31 +200,48 @@ i{
 }
 
 .product-image {
-  position: relative;
-  height: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+    position: relative;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .product-image::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(45deg, #ff9a9e, #fecfef, #a8edea, #fed6e3);
-  background-size: 400% 400%;
-  animation: gradientShift 8s ease infinite;
-  z-index: 0; /* put behind the content */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #ff9a9e, #fecfef, #a8edea, #fed6e3);
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    z-index: 0; /* put behind the content */
+}
+
+.logout {
+
+    background-color: #28a745;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+
 }
 
 .product-image img {
-  position: relative;
-  z-index: 1; /* put image above the gradient */
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain; /* optional */
+    position: relative;
+    z-index: 1; /* put image above the gradient */
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain; /* optional */
 }
+
 @keyframes gradientShift {
     0% {
         background-position: 0% 50%;
@@ -309,20 +331,23 @@ i{
     font-weight: 600;
     margin-bottom: 1rem;
 }
+
 .footer {
     background: #2c3e50;
     color: white;
     padding: 40px 0 20px;
 
-  /*position: fixed;*/
-  /*left: 0;*/
-  /*bottom: 0;*/
-  /*width: 100%;*/
+    /*position: fixed;*/
+    /*left: 0;*/
+    /*bottom: 0;*/
+    /*width: 100%;*/
 }
-main{
+
+main {
     min-height: fit-content;
     height: 505px;
 }
+
 .footer-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -441,28 +466,49 @@ main{
 
 
 .username-sample {
-margin: 1rem 0;
-font-size: 1.8rem;
+    margin: 1rem 0;
+    font-size: 1.8rem;
 }
-.pacifico { font-family: 'Pacifico', cursive; color: #ffeb3b; }
-.poppins { font-family: 'Poppins', sans-serif; font-weight: 600; color: #ffeb3b; }
-.baloo { font-family: 'Baloo 2', cursive; color: #ffeb3b; }
+
+.pacifico {
+    font-family: 'Pacifico', cursive;
+    color: #ffeb3b;
+}
+
+.poppins {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #ffeb3b;
+}
+
+.baloo {
+    font-family: 'Baloo 2', cursive;
+    color: #ffeb3b;
+}
+
 .baloo-pacifico {
     font-family: 'Baloo 2', 'Pacifico', cursive;
     color: #ffeb3b;
 }
-.quicksand { font-family: 'Quicksand', sans-serif; font-weight: 600; color: #ffeb3b; }
+
+.quicksand {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    color: #ffeb3b;
+}
+
 /* In your stylesheet */
 .medium-cursive {
-  font-family: 'Dancing Script', cursive;
-  font-weight: 500; /* Medium weight */
-  color: #ffeb3b;   /* Or any color that fits your design */
+    font-family: 'Dancing Script', cursive;
+    font-weight: 500; /* Medium weight */
+    color: #ffeb3b; /* Or any color that fits your design */
 }
+
 p {
-  display: block;
-  margin-top: 1em;
-  margin-bottom: 1em;
-  margin-left: 0;
-  margin-right: 0;
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 0;
+    margin-right: 0;
 }
 

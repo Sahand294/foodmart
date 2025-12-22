@@ -12,4 +12,18 @@ package_name = __name__
 from .users import *
 from .cart import *
 from .sitesetting import *
+from .address import *
+from .brandcategory import *
+from .brands import *
+from .cart import *
+from .category import *
+from .discounts import *
+from .manytomany import *
+from .orders import *
+from .paymentmethod import *
+from .products import *
+from .review import *
+from .shippingmethod import *
+from .sitesetting import *
+from .users import *
 

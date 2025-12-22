@@ -23,6 +23,7 @@
             <div>Amount</div>
             <div>Payment Method</div>
             <div>Purchase date</div>
+            <div>Address</div>
         </div>
             {% for o in o %}
                 <div class="product-card"
@@ -35,6 +36,7 @@
                     <div>amount:{{ o.amount }}</div>
                     <div>payment method:{{ o.payment_method }}</div>
                     <div>purchase date:{{ o.purchase_date }}</div>
+                    <div>address:{{ o.address }}</div>
                     <div class="product-actions">
                         <form method="POST" action="/admin_orders">
                             <input type="hidden" name="id" value="{{ o.id }}">

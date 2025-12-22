@@ -22,9 +22,11 @@
 
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required/>
-
-            <button type="submit">singup</button>
-
+            {% if owner %}
+            <label for="role">Role</label>
+            <input type="text" id="role" name="role" required placeholder="Customer,Owner,Admin"/>
+            {% endif %}
+        <button type="submit">singup</button>
         </form>
         {% if  errors %}{{ errors }}{% endif %}
     </div>
