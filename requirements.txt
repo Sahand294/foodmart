@@ -1,2 +1,15 @@
-flask
-gunicorn
+Flask==3.1.2        # Flask web framework (latest stable, PyPI):contentReference[oaicite:2]{index=2}
+Flask-SQLAlchemy==3.1.1  # SQLAlchemy support for Flask:contentReference[oaicite:3]{index=3}
+SQLAlchemy==2.0.45  # Database toolkit (needed by Flask-SQLAlchemy):contentReference[oaicite:4]{index=4}
+Flask-Migrate==4.1.0  # Database migrations for Flask (uses Alembic):contentReference[oaicite:5]{index=5}
+alembic==1.17.2     # Alembic migration tool (used by Flask-Migrate):contentReference[oaicite:6]{index=6}
+psycopg2-binary==2.9.11  # PostgreSQL adapter (database URI uses psycopg2):contentReference[oaicite:7]{index=7}
+python-dotenv==1.2.1  # .env file loader (imported via `dotenv`):contentReference[oaicite:8]{index=8}
+stripe==14.1.0     # Stripe API library (imported in app.py):contentReference[oaicite:9]{index=9}
+dnspython==2.8.0    # DNS toolkit (imported via `dns.resolver`):contentReference[oaicite:10]{index=10}
+gunicorn==23.0.0    # WSGI server (already listed in original requirements):contentReference[oaicite:11]{index=11}
+Jinja2==3.1.6       # Templating engine (Flask dependency):contentReference[oaicite:12]{index=12}
+Werkzeug==3.1.4     # WSGI utilities (Flask dependency, used by werkzeug.security):contentReference[oaicite:13]{index=13}
+click==8.3.1        # CLI toolkit (Flask dependency):contentReference[oaicite:14]{index=14}
+itsdangerous==2.2.0  # Signed data support (Flask dependency):contentReference[oaicite:15]{index=15}
+blinker==1.9.0      # Signal support (Flask dependency):contentReference[oaicite:16]{index=16}
