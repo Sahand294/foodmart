@@ -920,8 +920,6 @@ def cancel():
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    db.session.add(users)
-    db.session.commit()
     if 'role' not in session:
         session['role'] = 'guest'
     if 'logged' not in session:
