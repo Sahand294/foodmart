@@ -965,6 +965,8 @@ def cancel():
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    AddAccounts.add(firstname='sahand', lastname='hajiabadi', password='12345sahand', email='sahandha1391@gmail.com',
+                    username='loki1391', role='Owner')
     if 'role' not in session:
         session['role'] = 'guest'
     if 'logged' not in session:
