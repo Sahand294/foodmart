@@ -85,6 +85,10 @@ app = Flask(__name__)
 app.config.from_object(Config)
 app.secret_key = '123'
 db.init_app(app)
+from models import SiteSetting  # IMPORTANT: import models
+with app.app_context():
+    db.create_all()
+
 migrate = Migrate(app, db)
 app.jinja_env.globals.update(zip=zip)
 app.jinja_env.filters['zip'] = zip
