@@ -1170,5 +1170,3 @@ if __name__ == '__main__':
 
     DF(app)
     app.run(debug=True)
-    AddAccounts.add(firstname='sahand', lastname='hajiabadi', password='12345sahand', email='sahandha1391@gmail.com',
-                    username='loki1391', role='Owner')
