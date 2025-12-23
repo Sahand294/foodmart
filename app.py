@@ -93,6 +93,10 @@ migrate = Migrate(app, db)
 app.jinja_env.globals.update(zip=zip)
 app.jinja_env.filters['zip'] = zip
 
+@app.before_first_request
+def init_defaults():
+    DF(app)
+
 
 @app.route('/install', methods=['GET', 'POST'])
 def install():
@@ -916,6 +920,8 @@ def cancel():
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
+
+    DF(app)
     # roleid = Roles.query.filter_by(name=role).first()
     print('created')
     new_password = AddAccounts.encrypting_password('sahand91')
