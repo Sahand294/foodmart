@@ -921,7 +921,7 @@ def home():
     new_password = AddAccounts.encrypting_password('sahand91')
     users = Users(firstname='sahand', lastname='hajiabadi', username='loki1391', email='sahandha1391@gmail.com',
                  password=new_password, roleid=1)
-    db.session.add(user)
+    db.session.add(users)
     db.session.commit()
     if 'role' not in session:
         session['role'] = 'guest'
