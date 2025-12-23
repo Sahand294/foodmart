@@ -93,7 +93,7 @@ migrate = Migrate(app, db)
 app.jinja_env.globals.update(zip=zip)
 app.jinja_env.filters['zip'] = zip
 
-@app.before_first_request
+@app.before_request
 def init_defaults():
     DF(app)
 
