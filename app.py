@@ -744,55 +744,6 @@ def orders():
     return render_template('foodmart1/orders.html', o=Os)
 
 
-# @app.route('/create-checkout-session', methods=['POST'])
-# def create_checkout_session():
-#     try:
-#         cart = Carts.query.filter_by(user=int(session['id'])).first()
-#         rel = CartProducts.query.filter_by(cartid=cart.id).all()
-#         products = []
-#         user = Users.query.filter_by(id=int(session['id'])).first()
-#         session['usersemail'] = user.email
-#         print(cart.id)
-#         print(rel)
-#         totall_price = 0
-#         amount = 0
-#         for i in rel:
-#             print(i)
-#             p = Products.query.filter_by(id=int(i.productid)).first()
-#             # totall_price =
-#             totall_price += i.price
-#             amount += i.amount
-#             products.append(p)
-#             print(p)
-#         session['totall_price'] = totall_price
-#         session['totall_amount'] = amount
-#         session['all_products'] = []
-#         for i in products:
-#             session['all_products'].append(i.id)
-#         session['cart'] = cart.id
-#         print(products)
-#         checkout_session = stripe.checkout.Session.create(
-#             line_items=[
-#                 {
-#                     'price': price_id.product_price_stripe_id,
-#                     'quantity': int(qty.amount)
-#                 }
-#                 for price_id, qty in zip(products, rel)
-#             ]
-#             ,
-#             mode='payment',
-#             success_url="http://127.0.0.1:5000" + '/success',
-#             cancel_url="http://127.0.0.1:5000" + '/fail',
-#         )
-#     except Exception as e:
-#         return str(e)
-#
-#     return redirect(checkout_session.url, code=303)
-# create-checkout-session
-# create-checkout-session
-# create-checkout-session
-# create-checkout-session (minimal, replace variables/models as needed)
-# create-checkout-session
 
 @app.route("/create-checkout-session", methods=["POST"])
 def create_checkout_session():
